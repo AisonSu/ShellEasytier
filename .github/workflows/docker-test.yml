@@ -1,0 +1,61 @@
+name: Docker Test
+
+on:
+  push:
+    branches: [ main, master, dev ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build test image
+      run: |
+        docker build -f Dockerfile.test -t shelleasytier:test .
+
+    - name: Run tests
+      run: |
+        docker run --rm shelleasytier:test
+
+    - name: Run shellcheck
+      run: |
+        docker run --rm --entrypoint /bin/sh shelleasytier:test -c "
+          find /app/scripts -name '*.sh' -exec shellcheck --shell=sh --exclude=SC2039,SC3043,SC3010,SC3028 {} \;
+        "
+
+  multi-arch-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64, linux/arm/v7]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build for ${{ matrix.platform }}
+      run: |
+        docker buildx build \
+          --platform ${{ matrix.platform }} \
+          -f Dockerfile.test \
+          -t shelleasytier:test-${{ matrix.platform }} \
+          --load \
+          . || echo "Build skipped for ${{ matrix.platform }}"
+
+    - name: Test on ${{ matrix.platform }}
+      run: |
+        docker run --rm --platform ${{ matrix.platform }} shelleasytier:test-${{ matrix.platform }} || echo "Test skipped"

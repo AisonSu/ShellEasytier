@@ -1,0 +1,11 @@
+.git
+.gitignore
+Dockerfile.test
+docker-compose.test.yml
+.github
+test-results
+*.md
+!README.md
+scripts/lang/*/README.md
+scripts/libs/README.md
+scripts/menus/README.md

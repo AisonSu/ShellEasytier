@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: shelleasytier-test
+    volumes:
+      - ./test-results:/app/test-results
+    environment:
+      - CI=true
+      - TERM=xterm-256color
+
+  # 用于交互式测试/调试
+  test-shell:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: shelleasytier-test-shell
+    entrypoint: ["/bin/sh"]
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
