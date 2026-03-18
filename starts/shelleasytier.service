@@ -1,0 +1,13 @@
+[Unit]
+Description=ShellEasytier - EasyTier Client
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/etc/ShellEasytier/bin/easytier-core
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

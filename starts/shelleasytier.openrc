@@ -1,0 +1,10 @@
+#!/sbin/openrc-run
+# Copyright (C) ShellEasytier
+
+command="/etc/ShellEasytier/bin/easytier-core"
+command_background=true
+pidfile="/run/${RC_SVCNAME}.pid"
+
+depend() {
+    need net
+}
