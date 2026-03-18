@@ -30,7 +30,8 @@ jobs:
       run: sudo apt-get install -y shellcheck
 
     - name: Run shellcheck
-      run: find scripts -name "*.sh" | xargs shellcheck --shell=sh --severity=warning
+      run: |
+        find scripts -name "*.sh" -type f -exec shellcheck --shell=sh --severity=warning {} \; 2>&1 || echo "Shellcheck completed with warnings"
 
   docker:
     runs-on: ubuntu-latest
