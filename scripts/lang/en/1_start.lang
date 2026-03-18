@@ -1,0 +1,22 @@
+# Start/Stop Service
+
+START_SERVICE_OK="Service started successfully!"
+START_SERVICE_FAIL="Failed to start service!"
+START_SERVICE_STOPPED="Service stopped!"
+START_SERVICE_NOT_RUNNING="Service is not running!"
+START_NO_CORE="EasyTier core not found!"
+START_NO_CORE_DOWNLOAD="Download now?"
+START_DOWNLOADING="Downloading EasyTier core..."
+START_DOWNLOAD_OK="Download successful!"
+START_DOWNLOAD_FAIL="Download failed, check network or download manually!"
+
+START_CORE_RUNNING="EasyTier core is running"
+START_CORE_STOP_CONFIRM="Stop current service?"
+
+START_PEER_CONNECTING="Connecting to peers..."
+START_PEER_CONNECTED="Connected to network"
+START_PEER_DISCONNECTED="Not connected to any peers"
+
+START_HINT="Startup Hint"
+START_HINT_DHCP="Use DHCP mode for automatic virtual IP"
+START_HINT_STATIC="Use static virtual IP"

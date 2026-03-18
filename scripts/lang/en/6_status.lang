@@ -1,0 +1,47 @@
+# Status Monitor
+
+STATUS_MENU_TITLE="Status Monitor"
+STATUS_MENU_DESC="View EasyTier running status"
+
+# Status Info
+STATUS_SERVICE="Service Status"
+STATUS_RUNNING="Running"
+STATUS_STOPPED="Stopped"
+STATUS_UPTIME="Uptime"
+STATUS_PID="Process PID"
+
+# Network Status
+STATUS_NETWORK="Network Status"
+STATUS_IPV4="Virtual IP"
+STATUS_NETWORK_NAME="Network Name"
+STATUS_NODE_ID="Node ID"
+STATUS_LISTEN_PORT="Listen Port"
+
+# Connection Status
+STATUS_CONNECTIONS="Connection Status"
+STATUS_PEERS_COUNT="Peer Count"
+STATUS_RELAYS_COUNT="Relay Connections"
+STATUS_ROUTES_COUNT="Route Table Entries"
+
+# Traffic Statistics
+STATUS_TRAFFIC="Traffic Statistics"
+STATUS_TRAFFIC_RX="Received"
+STATUS_TRAFFIC_TX="Transmitted"
+
+# Peer Details
+STATUS_PEER_DETAILS="Peer Details"
+STATUS_PEER_ID="Peer ID"
+STATUS_PEER_ADDRESS="Address"
+STATUS_PEER_LATENCY="Latency"
+STATUS_PEER_TUNNEL="Tunnel Type"
+STATUS_PEER_DIRECT="Direct"
+STATUS_PEER_RELAY="Relay"
+
+# Actions
+STATUS_REFRESH="Refresh Status"
+STATUS_VIEW_LOG="View Logs"
+STATUS_CLEAR_LOG="Clear Logs"
+
+# Logs
+STATUS_LOG_TITLE="EasyTier Runtime Logs"
+STATUS_LOG_EMPTY="No log records"

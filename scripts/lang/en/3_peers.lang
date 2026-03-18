@@ -1,0 +1,46 @@
+# Peer Management
+
+PEER_MENU_TITLE="Peer Management"
+PEER_MENU_DESC="Manage EasyTier peer connections"
+
+# Menu Options
+PEER_MENU_LIST="View Peer List"
+PEER_MENU_ADD="Add Peer"
+PEER_MENU_DEL="Remove Peer"
+PEER_MENU_EDIT="Edit Peer"
+
+# Peer Types
+PEER_TYPE_TCP="TCP Peer"
+PEER_TYPE_UDP="UDP Peer"
+PEER_TYPE_WS="WebSocket Peer"
+PEER_TYPE_WSS="WebSocket TLS Peer"
+PEER_TYPE_QUIC="QUIC Peer"
+
+# Add Peer
+PEER_ADD_TITLE="Add Peer"
+PEER_ADD_DESC="Enter peer address, format: protocol://host:port"
+PEER_ADD_EXAMPLE="e.g., tcp://192.168.1.100:11010 or udp://peer.example.com:11010"
+PEER_INPUT_ADDRESS="Enter peer address: "
+PEER_INPUT_ALIAS="Enter peer alias (optional): "
+
+# Peer List
+PEER_LIST_TITLE="Peer List"
+PEER_LIST_EMPTY="No peers configured"
+PEER_LIST_COUNT="Configured Peers"
+
+# Messages
+PEER_ADD_OK="Peer added successfully!"
+PEER_ADD_FAIL="Failed to add peer!"
+PEER_DEL_OK="Peer removed successfully!"
+PEER_DEL_CONFIRM="Confirm delete this peer?"
+PEER_EDIT_OK="Peer modified successfully!"
+
+# Peer Status
+PEER_STATUS_CONNECTED="Connected"
+PEER_STATUS_DISCONNECTED="Disconnected"
+PEER_STATUS_CONNECTING="Connecting"
+PEER_STATUS_ERROR="Connection Error"
+
+# Selection
+PEER_SELECT_DEL="Select peer number to delete"
+PEER_SELECT_EDIT="Select peer number to edit"

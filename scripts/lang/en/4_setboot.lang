@@ -1,0 +1,31 @@
+# Boot Settings
+
+BOOT_MENU_TITLE="Boot Settings"
+BOOT_MENU_DESC="Configure autostart and other boot options"
+
+# Autostart Options
+BOOT_MENU_AUTOSTART="Autostart on Boot"
+BOOT_MENU_AUTOSTART_SET="Enable Autostart"
+BOOT_MENU_AUTOSTART_UNSET="Disable Autostart"
+
+# Boot Mode
+BOOT_MENU_MODE="Boot Mode"
+BOOT_MODE_TUN="TUN Mode (requires root)"
+BOOT_MODE_NO_TUN="No TUN Mode (SOCKS5 proxy)"
+
+# Current Status
+BOOT_CURRENT="Current Settings"
+BOOT_CURRENT_AUTOSTART="Autostart: Enabled"
+BOOT_CURRENT_NO_AUTOSTART="Autostart: Disabled"
+BOOT_CURRENT_MODE_TUN="Boot Mode: TUN"
+BOOT_CURRENT_MODE_NOTUN="Boot Mode: No TUN"
+
+# Messages
+BOOT_SET_OK="Autostart configured successfully!"
+BOOT_UNSET_OK="Autostart disabled!"
+BOOT_MODE_SET="Boot mode set"
+
+# Xiaomi Router Specific
+BOOT_MI_NOTE="Xiaomi Router Note"
+BOOT_MI_DESC="Script uses crontab and rc.local for autostart"
+BOOT_MI_SUGGEST="Install to /data or /userdisk for soft-persistence support"

@@ -1,0 +1,49 @@
+# Main Menu Language
+
+MENU_WELCOME="Welcome to ShellEasytier!"
+MENU_VERSION="Version"
+MENU_TG_CHANNEL="Official Channel:"
+MENU_GITHUB="GitHub:"
+
+# Running Status
+MENU_RUN_ON="Running"
+MENU_RUN_OFF="Not Running"
+MENU_RUN_SET="Configured"
+MENU_AUTOSTART_ON="Autostart Enabled"
+MENU_AUTOSTART_OFF="Autostart Disabled"
+
+# Main Menu Options
+MENU_MAIN_1="Start/Restart Service"
+MENU_MAIN_2="Network Config"
+MENU_MAIN_3="Stop Service"
+MENU_MAIN_4="Boot Settings"
+MENU_MAIN_5="Peer Management"
+MENU_MAIN_6="Subnet Proxy"
+MENU_MAIN_7="Relay Servers"
+MENU_MAIN_8="Status Monitor"
+MENU_MAIN_9="Update & Support"
+MENU_MAIN_0="Exit"
+MENU_MAIN_PROMPT="Enter number> "
+
+# Messages
+MENU_SERVICE_STARTED="Service started!"
+MENU_SERVICE_STOPPED="Service stopped!"
+MENU_SERVICE_RESTARTED="Service restarted!"
+MENU_RESTART_NOTICE="Configuration changed. Restart service to apply changes?"
+MENU_RESTART_NOW="1) Restart Now"
+MENU_RESTART_LATER="0) Later"
+
+# CLI Help
+MENU_CLI_TEST="Test Mode"
+MENU_CLI_HELP="Help"
+MENU_CLI_UNINSTALL="Uninstall"
+MENU_CLI_INIT="Initialize"
+MENU_CLI_DEBUG="Debug Run"
+MENU_CLI_START="Start Service"
+MENU_CLI_STOP="Stop Service"
+MENU_CLI_STATUS="View Status"
+
+# Help Info
+MENU_HELP_ONLINE="Online Help:"
+MENU_HELP_GITHUB="GitHub:"
+MENU_HELP_DOCS="Documentation:"

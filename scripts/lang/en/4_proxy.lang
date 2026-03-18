@@ -1,0 +1,35 @@
+# Subnet Proxy Configuration
+
+PROXY_MENU_TITLE="Subnet Proxy"
+PROXY_MENU_DESC="Allow other nodes to access local network"
+
+# Description
+PROXY_DESC="Subnet proxy allows other EasyTier nodes to access devices on your local network."
+PROXY_DESC_2="Example: 192.168.1.0/24 allows access to your router's entire LAN."
+
+# Menu Options
+PROXY_MENU_LIST="View Proxy Subnets"
+PROXY_MENU_ADD="Add Proxy Subnet"
+PROXY_MENU_DEL="Remove Proxy Subnet"
+PROXY_MENU_ENABLE="Enable Subnet Proxy"
+PROXY_MENU_DISABLE="Disable Subnet Proxy"
+
+# Input Prompts
+PROXY_INPUT_SUBNET="Enter subnet to proxy (e.g., 192.168.1.0/24): "
+PROXY_INPUT_CIDR="Enter CIDR suffix (e.g., 24): "
+
+# Messages
+PROXY_ADD_OK="Subnet proxy added successfully!"
+PROXY_ADD_FAIL="Invalid subnet format!"
+PROXY_DEL_OK="Subnet proxy removed successfully!"
+PROXY_ENABLE_OK="Subnet proxy enabled"
+PROXY_DISABLE_OK="Subnet proxy disabled"
+
+# Current Config
+PROXY_CURRENT="Current Proxy Subnets"
+PROXY_CURRENT_EMPTY="No subnet proxy configured"
+PROXY_CURRENT_ENABLED="Subnet Proxy: Enabled"
+PROXY_CURRENT_DISABLED="Subnet Proxy: Disabled"
+
+# Warning
+PROXY_WARN="Warning: Enabling subnet proxy exposes your local network. Ensure network security!"

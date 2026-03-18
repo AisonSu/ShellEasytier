@@ -1,0 +1,39 @@
+# Network Configuration
+
+NET_MENU_TITLE="Network Configuration"
+NET_MENU_DESC="Configure EasyTier virtual network parameters"
+
+# Config Items
+NET_MENU_IPV4="Virtual IP Address"
+NET_MENU_DHCP="DHCP Mode"
+NET_MENU_NETWORK_NAME="Network Name"
+NET_MENU_NETWORK_SECRET="Network Secret"
+NET_MENU_PORT="Listen Port"
+NET_MENU_RPC_PORT="RPC Management Port"
+
+# DHCP Mode
+NET_DHCP_DESC="DHCP mode automatically obtains virtual IP from network"
+NET_DHCP_ENABLE="Enable DHCP Mode"
+NET_DHCP_DISABLE="Use Static IP"
+
+# Input Prompts
+NET_INPUT_IPV4="Enter virtual IP (e.g., 10.144.144.1): "
+NET_INPUT_NETWORK_NAME="Enter network name: "
+NET_INPUT_NETWORK_SECRET="Enter network secret (optional): "
+NET_INPUT_PORT="Enter listen port [11010]: "
+NET_INPUT_RPC_PORT="Enter RPC management port [15888]: "
+
+# Messages
+NET_SET_OK="Network configuration saved!"
+NET_SET_NEED_RESTART="Configuration changed, restart required to apply"
+NET_IPV4_INVALID="Invalid IP address format!"
+NET_PORT_INVALID="Invalid port number!"
+
+# Current Config
+NET_CURRENT_CONFIG="Current Network Configuration"
+NET_CURRENT_IPV4="Virtual IP:"
+NET_CURRENT_NETWORK="Network Name:"
+NET_CURRENT_SECRET="Network Secret:"
+NET_CURRENT_PORT="Listen Port:"
+NET_CURRENT_RPC="RPC Port:"
+NET_CURRENT_DHCP="DHCP Mode:"

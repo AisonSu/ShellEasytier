@@ -1,0 +1,39 @@
+# Relay Server Configuration
+
+RELAY_MENU_TITLE="Relay Servers"
+RELAY_MENU_DESC="Configure relay servers for improved connectivity"
+
+# Description
+RELAY_DESC="When nodes cannot connect via P2P, traffic can be forwarded through relay servers."
+RELAY_DESC_2="Relay servers cannot decrypt your traffic; data remains end-to-end encrypted."
+
+# Menu Options
+RELAY_MENU_LIST="View Relay Servers"
+RELAY_MENU_ADD="Add Relay Server"
+RELAY_MENU_DEL="Remove Relay Server"
+RELAY_MENU_PUBLIC="Use Public Relays"
+RELAY_MENU_CUSTOM="Use Custom Relays"
+
+# Public Relays
+RELAY_PUBLIC_ENABLE="Enable Public Relay Servers"
+RELAY_PUBLIC_DISABLE="Disable Public Relay Servers"
+RELAY_PUBLIC_DESC="Public relays are community-provided and may be unstable"
+
+# Input Prompts
+RELAY_INPUT_ADDRESS="Enter relay server address: "
+RELAY_INPUT_EXAMPLE="e.g., tcp://relay.example.com:11010"
+
+# Messages
+RELAY_ADD_OK="Relay server added successfully!"
+RELAY_ADD_FAIL="Invalid address format!"
+RELAY_DEL_OK="Relay server removed successfully!"
+RELAY_SET_OK="Relay configuration saved!"
+
+# Current Config
+RELAY_CURRENT="Current Relay Configuration"
+RELAY_CURRENT_EMPTY="No relay servers configured"
+RELAY_CURRENT_PUBLIC="Public Relays: Enabled"
+RELAY_CURRENT_CUSTOM="Custom Relays"
+
+# Suggestion
+RELAY_SUGGEST="Suggestion: Prioritize P2P connections, use relays as fallback"
