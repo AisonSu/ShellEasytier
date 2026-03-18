@@ -32,8 +32,8 @@ mv -f /tmp/SE_tmp/* "$EASYDIR" 2>/dev/null
 
 # 配置文件路径
 CFG_PATH="$EASYDIR"/configs/ShellEasytier.cfg
-. "$EASYDIR"/libs/set_config.sh
-. "$EASYDIR"/libs/set_profile.sh
+. "$EASYDIR"/scripts/libs/set_config.sh
+. "$EASYDIR"/scripts/libs/set_profile.sh
 
 # 初始化配置目录
 mkdir -p "$EASYDIR"/configs
