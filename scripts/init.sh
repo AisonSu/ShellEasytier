@@ -1,0 +1,116 @@
+#!/bin/sh
+# Copyright (C) ShellEasytier
+# 初始化脚本
+
+# 检测系统类型
+systype=""
+[ -f "/etc/storage/started_script.sh" ] && {
+    systype=Padavan
+    initdir='/etc/storage/started_script.sh'
+}
+[ -d "/jffs" ] && {
+    systype=asusrouter
+    [ -f "/jffs/.asusrouter" ] && initdir='/jffs/.asusrouter'
+    [ -d "/jffs/scripts" ] && initdir='/jffs/scripts/nat-start'
+    nvram set jffs2_scripts="1"
+    nvram commit
+}
+[ -f "/data/etc/crontabs/root" ] && systype=mi_snapshot
+[ -w "/var/mnt/cfg/firewall" ] && systype=ng_snapshot
+
+# 容器环境检测
+grep -qE '/(docker|lxc|kubepods|crio|containerd)/' /proc/1/cgroup 2>/dev/null || [ -f /run/.containerenv ] || [ -f /.dockerenv ] && systype='container'
+
+# 设置安装目录
+[ "$systype" = 'container' ] && EASYDIR='/etc/ShellEasytier'
+[ -z "$EASYDIR" ] && [ -d /tmp/SE_tmp ] && . /tmp/SE_tmp/menus/set_easydir.sh && set_easydir
+
+# 创建目录
+mkdir -p "$EASYDIR"
+rm -rf /tmp/SE_tmp/menus/set_easydir.sh
+mv -f /tmp/SE_tmp/* "$EASYDIR" 2>/dev/null
+
+# 配置文件路径
+CFG_PATH="$EASYDIR"/configs/ShellEasytier.cfg
+. "$EASYDIR"/libs/set_config.sh
+. "$EASYDIR"/libs/set_profile.sh
+
+# 初始化配置目录
+mkdir -p "$EASYDIR"/configs
+[ -f "$CFG_PATH" ] || echo '# ShellEasytier Configuration File' > "$CFG_PATH"
+
+# 检测并设置启动方式
+[ -w /usr/lib/systemd/system ] && sysdir=/usr/lib/systemd/system
+[ -w /etc/systemd/system ] && sysdir=/etc/systemd/system
+
+if [ -f /etc/rc.common -a "$(cat /proc/1/comm)" = "procd" ]; then
+    # OpenWrt procd
+    cp -f "$EASYDIR"/starts/shelleasytier.procd /etc/init.d/shelleasytier 2>/dev/null
+    chmod 755 /etc/init.d/shelleasytier 2>/dev/null
+elif [ -n "$sysdir" -a "$USER" = "root" -a "$(cat /proc/1/comm)" = "systemd" ]; then
+    # systemd
+    mv -f "$EASYDIR"/starts/shelleasytier.service "$sysdir"/shelleasytier.service 2>/dev/null
+    sed -i "s%/etc/ShellEasytier%$EASYDIR%g" "$sysdir"/shelleasytier.service 2>/dev/null
+    systemctl daemon-reload 2>/dev/null
+elif rc-status -r >/dev/null 2>&1; then
+    # OpenRC
+    mv -f "$EASYDIR"/starts/shelleasytier.openrc /etc/init.d/shelleasytier 2>/dev/null
+    chmod 755 /etc/init.d/shelleasytier 2>/dev/null
+fi
+
+# 清理启动文件
+rm -rf "$EASYDIR"/starts/shelleasytier.procd
+rm -rf "$EASYDIR"/starts/shelleasytier.service
+rm -rf "$EASYDIR"/starts/shelleasytier.openrc
+
+# 设置默认语言
+[ -f "$EASYDIR"/configs/i18n.cfg ] || echo "chs" > "$EASYDIR"/configs/i18n.cfg
+
+# 批量授权
+command -v bash >/dev/null 2>&1 && shtype=bash
+[ -x /bin/ash ] && shtype=ash
+for file in scripts/menu.sh scripts/init.sh menus/*.sh; do
+    sed -i "s|/bin/sh|/bin/$shtype|" "$EASYDIR/$file" 2>/dev/null
+    chmod +x "$EASYDIR/$file" 2>/dev/null
+done
+
+# 设置版本
+version=$(cat "$EASYDIR"/version 2>/dev/null)
+setconfig versionsh_l "$version"
+
+# 生成环境变量文件
+[ ! -f "$EASYDIR"/configs/command.env ] && {
+    echo "EASY_TMPDIR=/tmp/ShellEasytier" > "$EASYDIR"/configs/command.env
+    echo "EASY_BINDIR=$EASYDIR" >> "$EASYDIR"/configs/command.env
+}
+
+# 创建必要目录
+mkdir -p "$EASYDIR"/bin
+mkdir -p "$EASYDIR"/configs
+
+# 设置命令别名
+case "$systype" in
+mi_snapshot)
+    # 小米路由器
+    shell_profile=/etc/profile
+    [ -f /etc/profile ] && {
+        if ! grep -q "alias se=" "$shell_profile" 2>/dev/null; then
+            echo "alias se='\"$EASYDIR\"/scripts/menu.sh'" >> "$shell_profile"
+            echo "alias easytier='\"$EASYDIR\"/scripts/menu.sh'" >> "$shell_profile"
+        fi
+    }
+    ;;
+*)
+    # 通用 Linux
+    for profile in /etc/profile ~/.bashrc ~/.bash_profile; do
+        [ -f "$profile" ] && {
+            if ! grep -q "alias se=" "$profile" 2>/dev/null; then
+                echo "alias se='\"$EASYDIR\"/scripts/menu.sh'" >> "$profile"
+            fi
+        }
+    done
+    ;;
+esac
+
+echo "ShellEasytier initialized successfully!"
+echo "Use 'se' or run '$EASYDIR/scripts/menu.sh' to start."
