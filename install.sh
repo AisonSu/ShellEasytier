@@ -19,7 +19,10 @@ LATEST_VERSION=$(curl -sL --connect-timeout 5 \
     grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
 
 # 如果获取失败，使用默认版本
-[ -z "$LATEST_VERSION" ] && LATEST_VERSION="v1.1.2"
+if [ -z "$LATEST_VERSION" ]; then
+    cecho "\033[33m无法获取最新版本，使用默认版本\033[0m"
+    LATEST_VERSION="v1.2.2"
+fi
 
 echo "**       最新版本: $LATEST_VERSION              **"
 echo "***********************************************"
@@ -195,6 +198,8 @@ install_main() {
 
     if [ "$result" != "200" ]; then
         cecho "\033[31m下载失败！请检查网络或手动安装。\033[0m"
+        cecho "\033[90m下载URL: https://github.com/AisonSu/ShellEasytier/releases/download/${LATEST_VERSION}/ShellEasytier.tar.gz\033[0m"
+        cecho "\033[90m版本: $LATEST_VERSION\033[0m"
         error_down
         exit 1
     fi
