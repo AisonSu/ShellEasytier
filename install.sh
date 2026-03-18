@@ -2,10 +2,15 @@
 # Copyright (C) ShellEasytier
 # 一键安装脚本
 
+# 安装脚本版本
+INSTALL_SCRIPT_VERSION="1.0.9"
+
 echo "***********************************************"
 echo "**                 欢迎使用                  **"
 echo "**              ShellEasytier                **"
 echo "**        EasyTier 客户端 for 路由器         **"
+echo "***********************************************"
+echo "**       安装脚本版本: $INSTALL_SCRIPT_VERSION        **"
 echo "***********************************************"
 
 # 安装源
@@ -187,6 +192,15 @@ install_main() {
     if tar -zxf /tmp/ShellEasytier.tar.gz -C "$dir/" 2>/dev/null || \
        tar -zxf /tmp/ShellEasytier.tar.gz --no-same-owner -C "$dir/" 2>/dev/null; then
         cecho "\033[32m解压成功！\033[0m"
+
+        # 检查压缩包内的版本
+        package_version=$(cat "$EASYDIR/version" 2>/dev/null || echo "unknown")
+        cecho "\033[36m安装包版本: $package_version\033[0m"
+
+        # 版本对比提示
+        if [ "$package_version" != "$INSTALL_SCRIPT_VERSION" ]; then
+            cecho "\033[33m注意: 安装脚本版本($INSTALL_SCRIPT_VERSION)与安装包版本($package_version)不一致\033[0m"
+        fi
     else
         cecho "\033[31m解压失败！\033[0m"
         exit 1
