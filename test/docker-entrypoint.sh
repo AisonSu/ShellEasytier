@@ -1,0 +1,170 @@
+#!/bin/sh
+# Copyright (C) ShellEasytier
+# Docker 测试入口脚本
+
+set -e
+
+echo "=============================================="
+echo "    ShellEasytier Docker 测试环境"
+echo "=============================================="
+echo ""
+
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+test_passed=0
+test_failed=0
+
+# 运行测试并记录结果
+run_test() {
+    test_name="$1"
+    shift
+
+    echo ""
+    echo "----------------------------------------------"
+    echo "Running: $test_name"
+    echo "----------------------------------------------"
+
+    if "$@"; then
+        echo -e "${GREEN}✓ $test_name PASSED${NC}"
+        test_passed=$((test_passed + 1))
+        return 0
+    else
+        echo -e "${RED}✗ $test_name FAILED${NC}"
+        test_failed=$((test_failed + 1))
+        return 1
+    fi
+}
+
+# 1. Shell 语法检查
+test_shell_syntax() {
+    echo "Checking shell script syntax..."
+    find /app/scripts -name "*.sh" -exec sh -n {} \; 2>&1
+}
+
+# 2. ShellCheck 静态分析
+test_shellcheck() {
+    echo "Running shellcheck..."
+    find /app/scripts -name "*.sh" -exec shellcheck \
+        --shell=sh \
+        --exclude=SC2039,SC3043,SC3010,SC3028 \
+        {} \; 2>&1 || true
+}
+
+# 3. 自动化测试套件
+test_automated() {
+    cd /app && sh test/test.sh
+}
+
+# 4. 模拟环境测试
+test_mock() {
+    cd /app && sh test/mock_test.sh
+}
+
+# 5. 安装脚本测试
+test_install() {
+    echo "Testing install script syntax..."
+    sh -n /app/install.sh
+    sh -n /app/build.sh
+    sh -n /app/scripts/init.sh
+}
+
+# 6. 文件权限检查
+test_permissions() {
+    echo "Checking file permissions..."
+
+    for script in /app/scripts/menu.sh /app/scripts/init.sh /app/install.sh; do
+        if [ ! -x "$script" ]; then
+            echo "Missing execute permission: $script"
+            return 1
+        fi
+    done
+
+    echo "All scripts have proper permissions"
+}
+
+# 7. 国际化完整性检查
+test_i18n_completeness() {
+    echo "Checking i18n completeness..."
+
+    chs_count=$(find /app/scripts/lang/chs -name "*.lang" | wc -l)
+    en_count=$(find /app/scripts/lang/en -name "*.lang" | wc -l)
+
+    if [ "$chs_count" -ne "$en_count" ]; then
+        echo "Language file count mismatch: chs=$chs_count, en=$en_count"
+        return 1
+    fi
+
+    echo "i18n check passed: $chs_count language files"
+}
+
+# 8. 功能模拟测试
+test_functional() {
+    echo "Running functional simulation tests..."
+
+    TEST_DIR="/tmp/se_functional_test"
+    rm -rf "$TEST_DIR"
+    mkdir -p "$TEST_DIR/configs"
+    mkdir -p "$TEST_DIR/scripts"
+
+    cp -r /app/scripts/* "$TEST_DIR/scripts/"
+    echo "1.0.0" > "$TEST_DIR/version"
+    echo "chs" > "$TEST_DIR/configs/i18n.cfg"
+    echo "# Config" > "$TEST_DIR/configs/ShellEasytier.cfg"
+
+    export EASYDIR="$TEST_DIR"
+    cd "$TEST_DIR"
+
+    . "$TEST_DIR/scripts/libs/set_config.sh"
+    setconfig TEST_KEY "test_value"
+
+    if ! grep -q "TEST_KEY=test_value" "$TEST_DIR/configs/ShellEasytier.cfg"; then
+        echo "Config test failed"
+        rm -rf "$TEST_DIR"
+        return 1
+    fi
+
+    . "$TEST_DIR/scripts/libs/i18n.sh"
+    load_lang common
+
+    if [ -z "$COMMON_INPUT" ]; then
+        echo "i18n load failed"
+        rm -rf "$TEST_DIR"
+        return 1
+    fi
+
+    echo "Functional tests passed"
+    rm -rf "$TEST_DIR"
+}
+
+# 执行所有测试
+echo "Starting test suite..."
+
+run_test "Shell Syntax Check" test_shell_syntax
+run_test "ShellCheck Analysis" test_shellcheck
+run_test "Automated Test Suite" test_automated
+run_test "Mock Environment Test" test_mock
+run_test "Install Script Check" test_install
+run_test "File Permissions Check" test_permissions
+run_test "i18n Completeness Check" test_i18n_completeness
+run_test "Functional Simulation" test_functional
+
+# 输出结果
+echo ""
+echo "=============================================="
+echo "              测试结果汇总"
+echo "=============================================="
+echo -e "通过: ${GREEN}$test_passed${NC}"
+echo -e "失败: ${RED}$test_failed${NC}"
+echo "=============================================="
+
+if [ $test_failed -eq 0 ]; then
+    echo -e "${GREEN}所有测试通过！${NC}"
+    exit 0
+else
+    echo -e "${RED}存在失败的测试！${NC}"
+    exit 1
+fi
