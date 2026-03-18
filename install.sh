@@ -206,6 +206,53 @@ install_main() {
         rm -rf /tmp/se_configs_backup
     fi
 
+    # 下载 EasyTier 二进制
+    echo "-----------------------------------------------"
+    cecho "\033[36m正在下载 EasyTier 核心...\033[0m"
+
+    # 检测架构
+    arch=$(uname -m)
+    case "$arch" in
+        x86_64)  ET_ARCH="x86_64-unknown-linux-musl" ;;
+        aarch64|arm64) ET_ARCH="aarch64-unknown-linux-musl" ;;
+        armv7l|armv7)  ET_ARCH="armv7-unknown-linux-musleabihf" ;;
+        mips)    ET_ARCH="mips-unknown-linux-musl" ;;
+        mipsel)  ET_ARCH="mipsel-unknown-linux-musl" ;;
+        *)       ET_ARCH="x86_64-unknown-linux-musl" ;;
+    esac
+
+    # EasyTier 下载镜像
+    et_mirrors="
+        https://ghproxy.com/https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
+        https://mirror.ghproxy.com/https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
+        https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
+    "
+
+    et_downloaded=0
+    for mirror in $et_mirrors; do
+        cecho "\033[33m尝试下载: $(echo $mirror | cut -d'/' -f3)\033[0m"
+        webget /tmp/easytier.zip "$mirror" echooff 2>/dev/null
+        if [ "$result" = "200" ]; then
+            et_downloaded=1
+            break
+        fi
+    done
+
+    if [ "$et_downloaded" = "1" ]; then
+        # 解压 EasyTier
+        if command -v unzip >/dev/null 2>&1; then
+            unzip -o /tmp/easytier.zip -d "$EASYDIR/bin/" 2>/dev/null
+            chmod +x "$EASYDIR/bin/"* 2>/dev/null
+            cecho "\033[32mEasyTier 下载成功！\033[0m"
+        else
+            cecho "\033[33m未找到 unzip，请手动安装 EasyTier 到 $EASYDIR/bin/\033[0m"
+        fi
+        rm -f /tmp/easytier.zip
+    else
+        cecho "\033[33mEasyTier 下载失败，请手动下载安装到 $EASYDIR/bin/\033[0m"
+        cecho "\033[36m下载地址: https://github.com/EasyTier/EasyTier/releases\033[0m"
+    fi
+
     # 运行初始化
     export EASYDIR
     if [ -f "$EASYDIR/scripts/init.sh" ]; then
