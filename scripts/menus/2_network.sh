@@ -200,8 +200,9 @@ set_config_server() {
     comp_box "Config-Server 模式"
     separator_line "-"
     content_line "输入 Config-Server 地址"
-    content_line "格式: http://IP:端口 或 https://域名"
-    content_line "示例: http://192.168.1.100:8080"
+    content_line "格式: udp://IP:端口/admin 或 仅用户名"
+    content_line "示例: udp://192.168.1.100:22020/admin"
+    content_line "        admin (使用官方服务器)"
     separator_line "-"
     content_line "\033[33m注意: 启用后将使用远程配置，忽略本地设置\033[0m"
     separator_line "="
@@ -212,8 +213,8 @@ set_config_server() {
         return
     fi
 
-    # 简单验证 URL 格式
-    if echo "$server" | grep -qE '^https?://.+'; then
+    # 验证格式: udp://xxx/admin 或 仅用户名
+    if echo "$server" | grep -qE '^udp://.+:/admin$' || ! echo "$server" | grep -qE '://'; then
         EASY_CONFIG_SERVER="$server"
         setconfig EASY_CONFIG_SERVER "$EASY_CONFIG_SERVER"
         msg_alert "\033[32m已切换到 Config-Server 模式\033[0m"
@@ -221,7 +222,8 @@ set_config_server() {
         content_line "\033[33m本地配置已禁用\033[0m"
         sleep 1
     else
-        msg_alert "\033[31m地址格式错误，应以 http:// 或 https:// 开头\033[0m"
+        msg_alert "\033[31m地址格式错误\033[0m"
+        content_line "请使用 udp://IP:端口/admin 格式"
     fi
 }
 
