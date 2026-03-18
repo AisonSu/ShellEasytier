@@ -232,6 +232,20 @@ install_main() {
         rm -rf /tmp/se_configs_backup
     fi
 
+    # 检查 unzip 是否可用
+    if ! command -v unzip >/dev/null 2>&1 && ! command -v busybox >/dev/null 2>&1; then
+        echo "-----------------------------------------------"
+        cecho "\033[33m警告: 未找到 unzip 命令\033[0m"
+        cecho "\033[33m请手动安装 unzip 后再运行安装:\033[0m"
+        cecho "  opkg update && opkg install unzip    # OpenWrt"
+        cecho "  或"
+        cecho "  apt-get install unzip               # Debian/Ubuntu"
+        cecho ""
+        cecho "\033[33m或者先安装 ShellEasytier，然后手动下载 EasyTier:\033[0m"
+        cecho "  https://github.com/EasyTier/EasyTier/releases"
+        sleep 3
+    fi
+
     # 下载 EasyTier 二进制
     echo "-----------------------------------------------"
     cecho "\033[36m正在下载 EasyTier 核心...\033[0m"
