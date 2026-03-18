@@ -227,11 +227,27 @@ install_main() {
         *)       ET_ARCH="x86_64-unknown-linux-musl" ;;
     esac
 
-    # 下载 EasyTier
+    # 下载 EasyTier - 尝试多个镜像
     cecho "\033[36m正在下载 EasyTier...\033[0m"
-    webget /tmp/easytier.zip "https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip" echooff
 
-    if [ "$result" = "200" ]; then
+    et_mirrors="
+        https://ghproxy.com/https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
+        https://mirror.ghproxy.com/https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
+        https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
+    "
+
+    et_downloaded=0
+    for mirror in $et_mirrors; do
+        cecho "\033[33m尝试下载源: $(echo $mirror | cut -d'/' -f3)\033[0m"
+        webget /tmp/easytier.zip "$mirror" echooff 2>/dev/null
+        if [ "$result" = "200" ]; then
+            et_downloaded=1
+            break
+        fi
+    done
+
+    if [ "$et_downloaded" = "1" ]; then
+        cecho "\033[32m下载成功！\033[0m"
         # 解压 EasyTier
         if command -v unzip >/dev/null 2>&1; then
             unzip -o /tmp/easytier.zip -d "$EASYDIR/bin/" 2>/dev/null
