@@ -91,6 +91,11 @@ upgrade_script() {
         # 解压并替换
         install_dir=$(dirname "$EASYDIR")
         if tar -zxf /tmp/ShellEasytier_new.tar.gz -C "$install_dir/" 2>/dev/null; then
+            # 设置执行权限
+            chmod +x "$EASYDIR/scripts/"*.sh 2>/dev/null
+            chmod +x "$EASYDIR/scripts/libs/"*.sh 2>/dev/null
+            chmod +x "$EASYDIR/scripts/menus/"*.sh 2>/dev/null
+
             # 恢复配置
             if [ -d /tmp/se_configs_backup ]; then
                 cp -r /tmp/se_configs_backup/* "$EASYDIR/configs/" 2>/dev/null
