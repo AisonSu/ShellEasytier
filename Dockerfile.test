@@ -206,7 +206,8 @@ else
 fi
 EOF
 
-chmod +x /app/entrypoint.sh
+# 设置执行权限并清理
+RUN chmod +x /app/entrypoint.sh
 
 # 设置入口点
 ENTRYPOINT ["/app/entrypoint.sh"]
