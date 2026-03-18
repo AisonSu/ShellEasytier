@@ -167,14 +167,21 @@ install_main() {
     # 创建目录
     mkdir -p "$EASYDIR"
 
-    # 下载安装包
+    # 下载安装包 - 尝试多个镜像源
     cecho "\033[36m正在下载 ShellEasytier...\033[0m"
-    webget /tmp/ShellEasytier.tar.gz "https://testingcf.jsdelivr.net/gh/EasyTier/ShellEasytier@main/ShellEasytier.tar.gz" echooff 2>/dev/null
 
-    if [ "$result" != "200" ]; then
-        # 尝试 GitHub 直连
-        webget /tmp/ShellEasytier.tar.gz "https://github.com/EasyTier/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz" echooff
-    fi
+    # 备用下载源列表
+    mirrors="
+        https://ghproxy.com/https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz
+        https://mirror.ghproxy.com/https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz
+        https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz
+    "
+
+    for mirror in $mirrors; do
+        cecho "\033[33m尝试下载源: $(echo $mirror | cut -d'/' -f3)\033[0m"
+        webget /tmp/ShellEasytier.tar.gz "$mirror" echooff 2>/dev/null
+        [ "$result" = "200" ] && break
+    done
 
     if [ "$result" != "200" ]; then
         cecho "\033[31m下载失败！请检查网络或手动安装。\033[0m"
