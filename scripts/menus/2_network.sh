@@ -214,7 +214,7 @@ set_config_server() {
     fi
 
     # 验证格式: udp://xxx/admin 或 仅用户名
-    if echo "$server" | grep -qE '^udp://.+:/admin$' || ! echo "$server" | grep -qE '://'; then
+    if echo "$server" | grep -qE '^udp://.+/admin$' || ! echo "$server" | grep -qE '://'; then
         EASY_CONFIG_SERVER="$server"
         setconfig EASY_CONFIG_SERVER "$EASY_CONFIG_SERVER"
         msg_alert "\033[32m已切换到 Config-Server 模式\033[0m"
