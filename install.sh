@@ -2,15 +2,26 @@
 # Copyright (C) ShellEasytier
 # 一键安装脚本
 
-# 安装脚本版本
-INSTALL_SCRIPT_VERSION="1.0.9"
-
 echo "***********************************************"
 echo "**                 欢迎使用                  **"
 echo "**              ShellEasytier                **"
 echo "**        EasyTier 客户端 for 路由器         **"
 echo "***********************************************"
-echo "**       安装脚本版本: $INSTALL_SCRIPT_VERSION        **"
+
+# 获取最新版本号
+cecho() {
+    printf '%b\n' "$*"
+}
+
+cecho "\033[36m正在获取最新版本信息...\033[0m"
+LATEST_VERSION=$(curl -sL --connect-timeout 5 \
+    "https://api.github.com/repos/AisonSu/ShellEasytier/releases/latest" 2>/dev/null | \
+    grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
+
+# 如果获取失败，使用默认版本
+[ -z "$LATEST_VERSION" ] && LATEST_VERSION="v1.1.2"
+
+echo "**       最新版本: $LATEST_VERSION              **"
 echo "***********************************************"
 
 # 安装源
@@ -178,7 +189,9 @@ install_main() {
 
     # 下载安装包
     cecho "\033[36m正在下载 ShellEasytier...\033[0m"
-    webget /tmp/ShellEasytier.tar.gz "https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz" echooff
+    webget /tmp/ShellEasytier.tar.gz \
+        "https://github.com/AisonSu/ShellEasytier/releases/download/${LATEST_VERSION}/ShellEasytier.tar.gz" \
+        echooff
 
     if [ "$result" != "200" ]; then
         cecho "\033[31m下载失败！请检查网络或手动安装。\033[0m"
@@ -198,8 +211,10 @@ install_main() {
         cecho "\033[36m安装包版本: $package_version\033[0m"
 
         # 版本对比提示
-        if [ "$package_version" != "$INSTALL_SCRIPT_VERSION" ]; then
-            cecho "\033[33m注意: 安装脚本版本($INSTALL_SCRIPT_VERSION)与安装包版本($package_version)不一致\033[0m"
+        if [ "$package_version" != "$LATEST_VERSION" ]; then
+            cecho "\033[33m注意: 预期版本($LATEST_VERSION)与安装包版本($package_version)不一致\033[0m"
+        else
+            cecho "\033[32m✓ 版本核对通过\033[0m"
         fi
     else
         cecho "\033[31m解压失败！\033[0m"

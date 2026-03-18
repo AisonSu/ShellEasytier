@@ -77,20 +77,40 @@ upgrade_script() {
     content_line "$UPGRADE_DOWNLOADING"
     separator_line "="
 
+    # 获取最新版本号
+    latest_version=$(get_latest_script_version)
+    if [ "$latest_version" = "unknown" ]; then
+        msg_alert "\033[31m无法获取最新版本信息\033[0m"
+        return 1
+    fi
+
     # 备份配置
     if [ -d "$EASYDIR/configs" ]; then
         cp -r "$EASYDIR/configs" /tmp/se_configs_backup/ 2>/dev/null
     fi
 
-    # 下载最新版本
+    # 下载指定版本
+    content_line "下载版本: $latest_version"
     webget /tmp/ShellEasytier_new.tar.gz \
-        "https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz" \
+        "https://github.com/AisonSu/ShellEasytier/releases/download/${latest_version}/ShellEasytier.tar.gz" \
         echooff 2>/dev/null
 
     if [ "$result" = "200" ]; then
         # 解压并替换
         install_dir=$(dirname "$EASYDIR")
         if tar -zxf /tmp/ShellEasytier_new.tar.gz -C "$install_dir/" 2>/dev/null; then
+            # 版本核对
+            downloaded_version=$(cat "$EASYDIR/version" 2>/dev/null || echo "unknown")
+            if [ "$downloaded_version" != "$latest_version" ]; then
+                msg_alert "\033[33m版本核对警告\033[0m"
+                content_line "预期版本: $latest_version"
+                content_line "实际版本: $downloaded_version"
+                content_line "继续安装..."
+                sleep 2
+            else
+                content_line "\033[32m✓ 版本核对通过: $downloaded_version\033[0m"
+            fi
+
             # 设置执行权限
             chmod +x "$EASYDIR/scripts/"*.sh 2>/dev/null
             chmod +x "$EASYDIR/scripts/libs/"*.sh 2>/dev/null
