@@ -24,19 +24,30 @@ jobs:
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Version: $VERSION"
 
-    - name: Update version file
+    - name: Update version file and commit
       run: |
-        echo "${{ steps.get_version.outputs.VERSION }}" > version
-        echo "Updated version file to: ${{ steps.get_version.outputs.VERSION }}"
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        echo "$VERSION" > version
+        echo "Updated version file to: $VERSION"
+        cat version
 
     - name: Commit and push version update
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add version
-        git commit -m "chore: update version to ${{ steps.get_version.outputs.VERSION }} [skip ci]"
-        # 强制推送到 main 分支
-        git push origin HEAD:main --force
+        git commit -m "chore: update version to ${{ steps.get_version.outputs.VERSION }} [skip ci]" || echo "No changes to commit"
+        git push origin HEAD:main --force || echo "Push failed"
+
+    - name: Re-checkout with updated version
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Verify version file
+      run: |
+        echo "Version file content:"
+        cat version
 
     - name: Create Release Package
       run: |
@@ -47,7 +58,7 @@ jobs:
         rm -rf "$BUILD_DIR"
         mkdir -p "$BUILD_DIR"
 
-        # 复制文件
+        # 复制文件（确保使用更新后的 version 文件）
         cp -r scripts "$BUILD_DIR/"
         cp -r starts "$BUILD_DIR/"
         cp -r bin "$BUILD_DIR/" 2>/dev/null || mkdir -p "$BUILD_DIR/bin"
@@ -61,9 +72,17 @@ jobs:
         cp docker-compose.test.yml "$BUILD_DIR/" 2>/dev/null || true
         cp .dockerignore "$BUILD_DIR/" 2>/dev/null || true
 
+        # 验证 version 文件
+        echo "Build dir version file:"
+        cat "$BUILD_DIR/version"
+
         # 创建压缩包
         tar -czf "ShellEasytier.tar.gz" -C "$BUILD_DIR" .
         ls -lh ShellEasytier.tar.gz
+
+        # 验证压缩包内的 version 文件
+        echo "Package version file content:"
+        tar -O -zxf ShellEasytier.tar.gz version
 
     - name: Upload Release Asset
       uses: softprops/action-gh-release@v1
