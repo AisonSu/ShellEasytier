@@ -219,21 +219,28 @@ install_main() {
     # 检测架构
     arch=$(uname -m)
     case "$arch" in
-        x86_64)  ET_ARCH="x86_64-unknown-linux-musl" ;;
-        aarch64|arm64) ET_ARCH="aarch64-unknown-linux-musl" ;;
-        armv7l|armv7)  ET_ARCH="armv7-unknown-linux-musleabihf" ;;
-        mips)    ET_ARCH="mips-unknown-linux-musl" ;;
-        mipsel)  ET_ARCH="mipsel-unknown-linux-musl" ;;
+        x86_64)  ET_ARCH="x86_64" ;;
+        aarch64|arm64) ET_ARCH="aarch64" ;;
+        armv7l|armv7)  ET_ARCH="armv7" ;;
+        arm*)    ET_ARCH="arm" ;;
+        mips)    ET_ARCH="mips" ;;
+        mipsel)  ET_ARCH="mipsel" ;;
         *)       ET_ARCH="unknown" ;;
     esac
+
+    # 获取最新版本号
+    cecho "\033[36m正在获取 EasyTier 最新版本...\033[0m"
+    et_version=$(curl -sL --connect-timeout 5 "https://api.github.com/repos/EasyTier/EasyTier/releases/latest" 2>/dev/null | grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
+    [ -z "$et_version" ] && et_version="v2.4.5"
+    cecho "\033[36m最新版本: $et_version\033[0m"
 
     # 下载 EasyTier - 尝试多个镜像
     cecho "\033[36m正在下载 EasyTier...\033[0m"
 
     et_mirrors="
-        https://ghproxy.com/https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
-        https://mirror.ghproxy.com/https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
-        https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
+        https://ghproxy.com/https://github.com/EasyTier/EasyTier/releases/download/${et_version}/easytier-linux-${ET_ARCH}-${et_version}.zip
+        https://mirror.ghproxy.com/https://github.com/EasyTier/EasyTier/releases/download/${et_version}/easytier-linux-${ET_ARCH}-${et_version}.zip
+        https://github.com/EasyTier/EasyTier/releases/download/${et_version}/easytier-linux-${ET_ARCH}-${et_version}.zip
     "
 
     et_downloaded=0
@@ -270,7 +277,7 @@ install_main() {
         if [ "$ET_ARCH" = "unknown" ]; then
             cecho "\033[36m检测到架构: ${arch} (未知架构，请手动选择)\033[0m"
         else
-            cecho "\033[36m架构: ${ET_ARCH}\033[0m"
+            cecho "\033[36m架构: easytier-linux-${ET_ARCH}-${et_version}.zip\033[0m"
         fi
     fi
 
