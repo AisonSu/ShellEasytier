@@ -1,0 +1,73 @@
+name: Update Version on Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Extract version from tag
+      id: get_version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION"
+
+    - name: Update version file
+      run: |
+        echo "${{ steps.get_version.outputs.VERSION }}" > version
+        echo "Updated version file to: ${{ steps.get_version.outputs.VERSION }}"
+
+    - name: Commit and push version update
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add version
+        git commit -m "chore: update version to ${{ steps.get_version.outputs.VERSION }} [skip ci]"
+        # 强制推送到 main 分支
+        git push origin HEAD:main --force
+
+    - name: Create Release Package
+      run: |
+        VERSION="${{ steps.get_version.outputs.VERSION }}"
+        BUILD_DIR="/tmp/selleasytier_build"
+
+        # 清理并创建构建目录
+        rm -rf "$BUILD_DIR"
+        mkdir -p "$BUILD_DIR"
+
+        # 复制文件
+        cp -r scripts "$BUILD_DIR/"
+        cp -r starts "$BUILD_DIR/"
+        cp -r bin "$BUILD_DIR/" 2>/dev/null || mkdir -p "$BUILD_DIR/bin"
+        cp version "$BUILD_DIR/"
+        cp README.md "$BUILD_DIR/" 2>/dev/null || true
+        cp LICENSE "$BUILD_DIR/" 2>/dev/null || true
+        cp install.sh "$BUILD_DIR/"
+        cp build.sh "$BUILD_DIR/"
+        cp Makefile "$BUILD_DIR/" 2>/dev/null || true
+        cp Dockerfile.test "$BUILD_DIR/" 2>/dev/null || true
+        cp docker-compose.test.yml "$BUILD_DIR/" 2>/dev/null || true
+        cp .dockerignore "$BUILD_DIR/" 2>/dev/null || true
+
+        # 创建压缩包
+        tar -czf "ShellEasytier.tar.gz" -C "$BUILD_DIR" .
+        ls -lh ShellEasytier.tar.gz
+
+    - name: Upload Release Asset
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ShellEasytier.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
