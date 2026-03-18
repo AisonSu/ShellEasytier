@@ -20,9 +20,9 @@ CFG_PATH="$EASYDIR"/configs/ShellEasytier.cfg
 . "$EASYDIR"/scripts/libs/i18n.sh
 . "$EASYDIR"/scripts/libs/service.sh
 . "$EASYDIR"/scripts/libs/check_autostart.sh
-. "$EASYDIR"/menus/tui_layout.sh
-. "$EASYDIR"/menus/common.sh
-. "$EASYDIR"/menus/1_start.sh
+. "$EASYDIR"/scripts/menus/tui_layout.sh
+. "$EASYDIR"/scripts/menus/common.sh
+. "$EASYDIR"/scripts/menus/1_start.sh
 
 # 加载语言
 load_lang common
@@ -113,7 +113,7 @@ main_menu() {
 			;;
 		2)
 			checkcfg=$(cat "$CFG_PATH" 2>/dev/null)
-			. "$EASYDIR"/menus/2_network.sh && network_menu
+			. "$EASYDIR"/scripts/menus/2_network.sh && network_menu
 			if [ -n "$PID" ]; then
 				checkcfg_new=$(cat "$CFG_PATH" 2>/dev/null)
 				[ "$checkcfg" != "$checkcfg_new" ] && checkrestart
@@ -124,11 +124,11 @@ main_menu() {
 			msg_alert "\033[31m$MENU_SERVICE_STOPPED\033[0m"
 			;;
 		4)
-			. "$EASYDIR"/menus/4_setboot.sh && setboot_menu
+			. "$EASYDIR"/scripts/menus/4_setboot.sh && setboot_menu
 			;;
 		5)
 			checkcfg=$(cat "$CFG_PATH" 2>/dev/null)
-			. "$EASYDIR"/menus/3_peers.sh && peers_menu
+			. "$EASYDIR"/scripts/menus/3_peers.sh && peers_menu
 			if [ -n "$PID" ]; then
 				checkcfg_new=$(cat "$CFG_PATH" 2>/dev/null)
 				[ "$checkcfg" != "$checkcfg_new" ] && checkrestart
@@ -136,7 +136,7 @@ main_menu() {
 			;;
 		6)
 			checkcfg=$(cat "$CFG_PATH" 2>/dev/null)
-			. "$EASYDIR"/menus/4_proxy.sh && proxy_menu
+			. "$EASYDIR"/scripts/menus/4_proxy.sh && proxy_menu
 			if [ -n "$PID" ]; then
 				checkcfg_new=$(cat "$CFG_PATH" 2>/dev/null)
 				[ "$checkcfg" != "$checkcfg_new" ] && checkrestart
@@ -144,17 +144,17 @@ main_menu() {
 			;;
 		7)
 			checkcfg=$(cat "$CFG_PATH" 2>/dev/null)
-			. "$EASYDIR"/menus/5_relay.sh && relay_menu
+			. "$EASYDIR"/scripts/menus/5_relay.sh && relay_menu
 			if [ -n "$PID" ]; then
 				checkcfg_new=$(cat "$CFG_PATH" 2>/dev/null)
 				[ "$checkcfg" != "$checkcfg_new" ] && checkrestart
 			fi
 			;;
 		8)
-			. "$EASYDIR"/menus/6_status.sh && status_menu
+			. "$EASYDIR"/scripts/menus/6_status.sh && status_menu
 			;;
 		9)
-			. "$EASYDIR"/menus/9_upgrade.sh && upgrade_menu
+			. "$EASYDIR"/scripts/menus/9_upgrade.sh && upgrade_menu
 			;;
 		*)
 			errornum

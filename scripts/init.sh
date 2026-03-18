@@ -27,12 +27,12 @@ grep -qE '/(docker|lxc|kubepods|crio|containerd)/' /proc/1/cgroup 2>/dev/null ||
 
 # 设置安装目录
 [ "$systype" = 'container' ] && EASYDIR='/etc/ShellEasytier'
-[ -z "$EASYDIR" ] && [ -d /tmp/SE_tmp ] && . /tmp/SE_tmp/menus/set_easydir.sh && set_easydir
+[ -z "$EASYDIR" ] && [ -d /data/ShellEasytier ] && EASYDIR='/data/ShellEasytier'
+[ -z "$EASYDIR" ] && [ -d /etc/shelleasytier/ShellEasytier ] && EASYDIR='/etc/shelleasytier/ShellEasytier'
+[ -z "$EASYDIR" ] && EASYDIR='/data/ShellEasytier'
 
 # 创建目录
 mkdir -p "$EASYDIR"
-rm -rf /tmp/SE_tmp/menus/set_easydir.sh
-mv -f /tmp/SE_tmp/* "$EASYDIR" 2>/dev/null
 
 # 配置文件路径
 CFG_PATH="$EASYDIR"/configs/ShellEasytier.cfg
