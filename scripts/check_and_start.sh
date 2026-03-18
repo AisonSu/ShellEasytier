@@ -9,8 +9,8 @@
 [ -z "$EASYDIR" ] && exit 1
 
 # 加载库
-. "$EASYDIR"/libs/get_config.sh 2>/dev/null || exit 1
-. "$EASYDIR"/libs/service.sh 2>/dev/null || exit 1
+. "$EASYDIR"/scripts/libs/get_config.sh 2>/dev/null || exit 1
+. "$EASYDIR"/scripts/libs/service.sh 2>/dev/null || exit 1
 
 # 检查是否已在运行
 if is_running; then
