@@ -224,7 +224,7 @@ install_main() {
         armv7l|armv7)  ET_ARCH="armv7-unknown-linux-musleabihf" ;;
         mips)    ET_ARCH="mips-unknown-linux-musl" ;;
         mipsel)  ET_ARCH="mipsel-unknown-linux-musl" ;;
-        *)       ET_ARCH="x86_64-unknown-linux-musl" ;;
+        *)       ET_ARCH="unknown" ;;
     esac
 
     # 下载 EasyTier - 尝试多个镜像
@@ -267,7 +267,11 @@ install_main() {
     else
         cecho "\033[33mEasyTier 下载失败，请手动下载安装到 $EASYDIR/bin/\033[0m"
         cecho "\033[36m下载地址: https://github.com/EasyTier/EasyTier/releases\033[0m"
-        cecho "\033[36m架构: ${ET_ARCH}\033[0m"
+        if [ "$ET_ARCH" = "unknown" ]; then
+            cecho "\033[36m检测到架构: ${arch} (未知架构，请手动选择)\033[0m"
+        else
+            cecho "\033[36m架构: ${ET_ARCH}\033[0m"
+        fi
     fi
 
     # 运行初始化
