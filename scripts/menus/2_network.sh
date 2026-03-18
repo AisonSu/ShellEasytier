@@ -131,6 +131,26 @@ set_listen_port() {
     fi
 }
 
+# 设置 Config-Server
+set_config_server() {
+    comp_box "Config-Server"
+    separator_line "-"
+    content_line "输入 Config-Server 地址 (如: http://192.168.1.100:8080)"
+    content_line "留空表示禁用"
+    separator_line "="
+    read -r -p "> " server
+
+    if [ -z "$server" ]; then
+        delconfig EASY_CONFIG_SERVER
+        EASY_CONFIG_SERVER=""
+        msg_alert "\033[33mConfig-Server 已禁用\033[0m"
+    else
+        EASY_CONFIG_SERVER="$server"
+        setconfig EASY_CONFIG_SERVER "$EASY_CONFIG_SERVER"
+        msg_alert "\033[32mConfig-Server 已设置\033[0m"
+    fi
+}
+
 # 设置RPC端口
 set_rpc_port() {
     comp_box "$NET_CURRENT_RPC ${EASY_RPC_PORT:-15888}"
@@ -164,6 +184,7 @@ network_menu() {
         content_line "4) $NET_MENU_NETWORK_SECRET\t\033[36m${EASY_NETWORK_SECRET:+$COMMON_SET}${EASY_NETWORK_SECRET:-$COMMON_UNSET}\033[0m"
         content_line "5) $NET_MENU_PORT\t\033[36m${EASY_PORT:-11010}\033[0m"
         content_line "6) $NET_MENU_RPC_PORT\t\033[36m${EASY_RPC_PORT:-15888}\033[0m"
+        content_line "7) Config-Server\t\033[36m${EASY_CONFIG_SERVER:-$COMMON_UNSET}\033[0m"
         btm_box "" \
             "0) $COMMON_BACK"
         read -r -p "$COMMON_INPUT> " num
@@ -189,6 +210,9 @@ network_menu() {
             ;;
         6)
             set_rpc_port
+            ;;
+        7)
+            set_config_server
             ;;
         *)
             errornum

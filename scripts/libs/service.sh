@@ -70,6 +70,9 @@ start_easytier() {
     # 禁用 TUN (如无权限)
     [ "$EASY_NO_TUN" = "1" ] && args="$args --no-tun"
 
+    # Config-Server
+    [ -n "$EASY_CONFIG_SERVER" ] && args="$args --config-server $EASY_CONFIG_SERVER"
+
     # 启动服务
     cd "$EASY_TMPDIR" || exit 1
     nohup "$EASYDIR/bin/easytier-core" $args >> "$EASY_TMPDIR/easytier.log" 2>&1 &

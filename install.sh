@@ -171,21 +171,9 @@ install_main() {
     # 创建目录
     mkdir -p "$EASYDIR"
 
-    # 下载安装包 - 尝试多个镜像源
+    # 下载安装包
     cecho "\033[36m正在下载 ShellEasytier...\033[0m"
-
-    # 备用下载源列表
-    mirrors="
-        https://ghproxy.com/https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz
-        https://mirror.ghproxy.com/https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz
-        https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz
-    "
-
-    for mirror in $mirrors; do
-        cecho "\033[33m尝试下载源: $(echo $mirror | cut -d'/' -f3)\033[0m"
-        webget /tmp/ShellEasytier.tar.gz "$mirror" echooff 2>/dev/null
-        [ "$result" = "200" ] && break
-    done
+    webget /tmp/ShellEasytier.tar.gz "https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz" echooff
 
     if [ "$result" != "200" ]; then
         cecho "\033[31m下载失败！请检查网络或手动安装。\033[0m"
@@ -225,24 +213,11 @@ install_main() {
         *)       ET_ARCH="x86_64-unknown-linux-musl" ;;
     esac
 
-    # EasyTier 下载镜像
-    et_mirrors="
-        https://ghproxy.com/https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
-        https://mirror.ghproxy.com/https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
-        https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip
-    "
+    # 下载 EasyTier
+    cecho "\033[36m正在下载 EasyTier...\033[0m"
+    webget /tmp/easytier.zip "https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip" echooff
 
-    et_downloaded=0
-    for mirror in $et_mirrors; do
-        cecho "\033[33m尝试下载: $(echo $mirror | cut -d'/' -f3)\033[0m"
-        webget /tmp/easytier.zip "$mirror" echooff 2>/dev/null
-        if [ "$result" = "200" ]; then
-            et_downloaded=1
-            break
-        fi
-    done
-
-    if [ "$et_downloaded" = "1" ]; then
+    if [ "$result" = "200" ]; then
         # 解压 EasyTier
         if command -v unzip >/dev/null 2>&1; then
             unzip -o /tmp/easytier.zip -d "$EASYDIR/bin/" 2>/dev/null

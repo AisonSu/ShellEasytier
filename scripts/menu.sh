@@ -28,6 +28,9 @@ CFG_PATH="$EASYDIR"/configs/ShellEasytier.cfg
 load_lang common
 load_lang menu
 
+# 读取版本
+version_l=$(cat "$EASYDIR/version" 2>/dev/null || echo "unknown")
+
 # 检查是否需要重启服务
 checkrestart() {
 	comp_box "\033[32m$MENU_RESTART_NOTICE\033[0m"
