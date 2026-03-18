@@ -30,48 +30,59 @@ start_easytier() {
     # 构建启动参数
     args=""
 
-    # 虚拟 IP
-    [ -n "$EASY_IPV4" ] && args="$args --ipv4 $EASY_IPV4"
+    # 判断配置模式：优先检查 Config-Server
+    if [ -n "$EASY_CONFIG_SERVER" ]; then
+        # Config-Server 模式：只使用远程配置
+        args="--config-server $EASY_CONFIG_SERVER"
 
-    # DHCP 模式
-    [ "$EASY_DHCP" = "1" ] && args="$args -d"
+        # 可选：RPC 端口在两种模式下都可用
+        [ -n "$EASY_RPC_PORT" ] && args="$args --rpc-portal 127.0.0.1:$EASY_RPC_PORT"
 
-    # 网络名称和密码
-    [ -n "$EASY_NETWORK_NAME" ] && args="$args -n $EASY_NETWORK_NAME"
-    [ -n "$EASY_NETWORK_SECRET" ] && args="$args --network-secret $EASY_NETWORK_SECRET"
+        # 可选：禁用 TUN
+        [ "$EASY_NO_TUN" = "1" ] && args="$args --no-tun"
+    else
+        # 本地配置模式：使用所有本地参数
 
-    # 对等节点
-    if [ -f "$EASYDIR/configs/peers.cfg" ]; then
-        while IFS= read -r peer; do
-            [ -n "$peer" ] && args="$args -p $peer"
-        done < "$EASYDIR/configs/peers.cfg"
+        # 虚拟 IP
+        [ -n "$EASY_IPV4" ] && args="$args --ipv4 $EASY_IPV4"
+
+        # DHCP 模式
+        [ "$EASY_DHCP" = "1" ] && args="$args -d"
+
+        # 网络名称和密码
+        [ -n "$EASY_NETWORK_NAME" ] && args="$args -n $EASY_NETWORK_NAME"
+        [ -n "$EASY_NETWORK_SECRET" ] && args="$args --network-secret $EASY_NETWORK_SECRET"
+
+        # 对等节点
+        if [ -f "$EASYDIR/configs/peers.cfg" ]; then
+            while IFS= read -r peer; do
+                [ -n "$peer" ] && args="$args -p $peer"
+            done < "$EASYDIR/configs/peers.cfg"
+        fi
+
+        # RPC 端口
+        [ -n "$EASY_RPC_PORT" ] && args="$args --rpc-portal 127.0.0.1:$EASY_RPC_PORT"
+
+        # 监听器端口
+        [ -n "$EASY_PORT" ] && args="$args -l $EASY_PORT"
+
+        # 中继服务器
+        if [ -f "$EASYDIR/configs/relays.cfg" ]; then
+            while IFS= read -r relay; do
+                [ -n "$relay" ] && args="$args -r $relay"
+            done < "$EASYDIR/configs/relays.cfg"
+        fi
+
+        # 子网代理
+        if [ -f "$EASYDIR/configs/proxy_subnets.cfg" ]; then
+            while IFS= read -r subnet; do
+                [ -n "$subnet" ] && args="$args --proxy-networks $subnet"
+            done < "$EASYDIR/configs/proxy_subnets.cfg"
+        fi
+
+        # 禁用 TUN (如无权限)
+        [ "$EASY_NO_TUN" = "1" ] && args="$args --no-tun"
     fi
-
-    # RPC 端口
-    [ -n "$EASY_RPC_PORT" ] && args="$args --rpc-portal 127.0.0.1:$EASY_RPC_PORT"
-
-    # 监听器端口
-    [ -n "$EASY_PORT" ] && args="$args -l $EASY_PORT"
-
-    # 中继服务器
-    if [ -f "$EASYDIR/configs/relays.cfg" ]; then
-        while IFS= read -r relay; do
-            [ -n "$relay" ] && args="$args -r $relay"
-        done < "$EASYDIR/configs/relays.cfg"
-    fi
-
-    # 子网代理
-    if [ -f "$EASYDIR/configs/proxy_subnets.cfg" ]; then
-        while IFS= read -r subnet; do
-            [ -n "$subnet" ] && args="$args --proxy-networks $subnet"
-        done < "$EASYDIR/configs/proxy_subnets.cfg"
-    fi
-
-    # 禁用 TUN (如无权限)
-    [ "$EASY_NO_TUN" = "1" ] && args="$args --no-tun"
-
-    # Config-Server
-    [ -n "$EASY_CONFIG_SERVER" ] && args="$args --config-server $EASY_CONFIG_SERVER"
 
     # 启动服务
     cd "$EASY_TMPDIR" || exit 1
