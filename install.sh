@@ -245,12 +245,20 @@ install_main() {
             chmod +x "$EASYDIR/bin/"* 2>/dev/null
             cecho "\033[32mEasyTier 下载成功！\033[0m"
         else
-            cecho "\033[33m未找到 unzip，请手动安装 EasyTier 到 $EASYDIR/bin/\033[0m"
+            # 尝试使用 busybox unzip
+            if busybox unzip -o /tmp/easytier.zip -d "$EASYDIR/bin/" 2>/dev/null; then
+                chmod +x "$EASYDIR/bin/"* 2>/dev/null
+                cecho "\033[32mEasyTier 下载成功！\033[0m"
+            else
+                cecho "\033[33m未找到 unzip，请手动解压 /tmp/easytier.zip 到 $EASYDIR/bin/\033[0m"
+                cecho "\033[36m命令: mkdir -p $EASYDIR/bin \u0026\u0026 unzip /tmp/easytier.zip -d $EASYDIR/bin/\033[0m"
+            fi
         fi
         rm -f /tmp/easytier.zip
     else
         cecho "\033[33mEasyTier 下载失败，请手动下载安装到 $EASYDIR/bin/\033[0m"
         cecho "\033[36m下载地址: https://github.com/EasyTier/EasyTier/releases\033[0m"
+        cecho "\033[36m架构: ${ET_ARCH}\033[0m"
     fi
 
     # 运行初始化
