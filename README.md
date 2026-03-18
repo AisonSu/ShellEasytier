@@ -1,6 +1,10 @@
 # ShellEasytier
 
+> Interactive TUI manager for EasyTier VPN on embedded routers.
+
 ShellEasytier 是一个专为嵌入式设备（如小米路由器）设计的 EasyTier 客户端管理脚本，提供友好的交互式菜单界面。
+
+**English**: Interactive TUI manager for EasyTier VPN on embedded routers. Supports Xiaomi/OpenWrt/ASUS firmwares with one-click setup, peer management, and subnet proxy.
 
 ## 功能特性
 
