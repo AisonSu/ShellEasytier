@@ -200,9 +200,11 @@ set_config_server() {
     comp_box "Config-Server 模式"
     separator_line "-"
     content_line "输入 Config-Server 地址"
-    content_line "格式: udp://IP:端口/admin 或 仅用户名"
-    content_line "示例: udp://192.168.1.100:22020/admin"
-    content_line "        admin (使用官方服务器)"
+    content_line "格式: udp://IP:端口/用户名 或 tcp://IP:端口/用户名"
+    content_line "示例: udp://192.168.1.100:22020/MyName"
+    content_line "        tcp://192.168.1.100:22020/MyName"
+    content_line "        MyName (仅用户名，使用官方服务器)"
+    content_line "\033[90m注: 用户名区分大小写，支持任意名称\033[0m"
     separator_line "-"
     content_line "\033[33m注意: 启用后将使用远程配置，忽略本地设置\033[0m"
     separator_line "="
@@ -213,8 +215,8 @@ set_config_server() {
         return
     fi
 
-    # 验证格式: udp://xxx/admin 或 仅用户名
-    if echo "$server" | grep -qE '^udp://.+/admin$' || ! echo "$server" | grep -qE '://'; then
+    # 验证格式: udp://host:port/username 或 tcp://host:port/username 或 仅用户名
+    if echo "$server" | grep -qE '^(udp|tcp)://[^/]+/.+$' || ! echo "$server" | grep -qE '://'; then
         EASY_CONFIG_SERVER="$server"
         setconfig EASY_CONFIG_SERVER "$EASY_CONFIG_SERVER"
         msg_alert "\033[32m已切换到 Config-Server 模式\033[0m"
@@ -223,7 +225,7 @@ set_config_server() {
         sleep 1
     else
         msg_alert "\033[31m地址格式错误\033[0m"
-        content_line "请使用 udp://IP:端口/admin 格式"
+        content_line "请使用 udp://IP:端口/用户名 或 tcp://IP:端口/用户名"
     fi
 }
 
