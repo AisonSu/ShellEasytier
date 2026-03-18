@@ -1,0 +1,35 @@
+# 子网代理配置
+
+PROXY_MENU_TITLE="子网代理"
+PROXY_MENU_DESC="允许其他节点访问本机局域网"
+
+# 子网代理说明
+PROXY_DESC="子网代理允许其他 EasyTier 节点访问您本地网络中的设备。"
+PROXY_DESC_2="例如: 192.168.1.0/24 将允许访问您路由器的整个局域网。"
+
+# 菜单选项
+PROXY_MENU_LIST="查看代理子网"
+PROXY_MENU_ADD="添加代理子网"
+PROXY_MENU_DEL="删除代理子网"
+PROXY_MENU_ENABLE="启用子网代理"
+PROXY_MENU_DISABLE="禁用子网代理"
+
+# 输入提示
+PROXY_INPUT_SUBNET="请输入要代理的子网 (如 192.168.1.0/24): "
+PROXY_INPUT_CIDR="请输入 CIDR 后缀 (如 24): "
+
+# 提示信息
+PROXY_ADD_OK="子网代理添加成功！"
+PROXY_ADD_FAIL="子网格式无效！"
+PROXY_DEL_OK="子网代理删除成功！"
+PROXY_ENABLE_OK="子网代理已启用"
+PROXY_DISABLE_OK="子网代理已禁用"
+
+# 当前配置
+PROXY_CURRENT="当前代理子网"
+PROXY_CURRENT_EMPTY="未配置子网代理"
+PROXY_CURRENT_ENABLED="子网代理状态: 已启用"
+PROXY_CURRENT_DISABLED="子网代理状态: 已禁用"
+
+# 警告
+PROXY_WARN="注意: 启用子网代理会暴露您的本地网络，请确保网络安全！"

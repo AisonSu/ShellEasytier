@@ -1,0 +1,39 @@
+# 网络配置
+
+NET_MENU_TITLE="网络配置"
+NET_MENU_DESC="配置 EasyTier 虚拟网络参数"
+
+# 配置项
+NET_MENU_IPV4="虚拟 IP 地址"
+NET_MENU_DHCP="DHCP 模式"
+NET_MENU_NETWORK_NAME="网络名称"
+NET_MENU_NETWORK_SECRET="网络密钥"
+NET_MENU_PORT="监听端口"
+NET_MENU_RPC_PORT="RPC 管理端口"
+
+# DHCP 模式
+NET_DHCP_DESC="DHCP 模式会自动从网络中获取虚拟 IP"
+NET_DHCP_ENABLE="启用 DHCP 模式"
+NET_DHCP_DISABLE="使用静态 IP"
+
+# 输入提示
+NET_INPUT_IPV4="请输入虚拟 IP 地址 (如 10.144.144.1): "
+NET_INPUT_NETWORK_NAME="请输入网络名称: "
+NET_INPUT_NETWORK_SECRET="请输入网络密钥 (可选): "
+NET_INPUT_PORT="请输入监听端口 [11010]: "
+NET_INPUT_RPC_PORT="请输入 RPC 管理端口 [15888]: "
+
+# 提示信息
+NET_SET_OK="网络配置已保存！"
+NET_SET_NEED_RESTART="配置已更改，需要重启服务生效"
+NET_IPV4_INVALID="IP 地址格式无效！"
+NET_PORT_INVALID="端口号无效！"
+
+# 当前配置
+NET_CURRENT_CONFIG="当前网络配置"
+NET_CURRENT_IPV4="虚拟 IP:"
+NET_CURRENT_NETWORK="网络名称:"
+NET_CURRENT_SECRET="网络密钥:"
+NET_CURRENT_PORT="监听端口:"
+NET_CURRENT_RPC="RPC 端口:"
+NET_CURRENT_DHCP="DHCP 模式:"

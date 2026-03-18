@@ -1,0 +1,49 @@
+# 主菜单语言
+
+MENU_WELCOME="欢迎使用 ShellEasytier！"
+MENU_VERSION="版本"
+MENU_TG_CHANNEL="官方频道："
+MENU_GITHUB="GitHub："
+
+# 运行状态
+MENU_RUN_ON="正在运行"
+MENU_RUN_OFF="未运行"
+MENU_RUN_SET="已设置"
+MENU_AUTOSTART_ON="已设置开机启动"
+MENU_AUTOSTART_OFF="未设置开机启动"
+
+# 主菜单选项
+MENU_MAIN_1="启动/重启服务"
+MENU_MAIN_2="网络配置"
+MENU_MAIN_3="停止服务"
+MENU_MAIN_4="启动设置"
+MENU_MAIN_5="对等节点管理"
+MENU_MAIN_6="子网代理"
+MENU_MAIN_7="中继服务器"
+MENU_MAIN_8="状态监控"
+MENU_MAIN_9="更新与支持"
+MENU_MAIN_0="退出脚本"
+MENU_MAIN_PROMPT="请输入对应数字> "
+
+# 提示信息
+MENU_SERVICE_STARTED="服务已启动！"
+MENU_SERVICE_STOPPED="服务已停止！"
+MENU_SERVICE_RESTARTED="服务已重启！"
+MENU_RESTART_NOTICE="检测到配置变更，是否立即重启服务以应用新配置？"
+MENU_RESTART_NOW="1) 立即重启"
+MENU_RESTART_LATER="0) 暂不重启"
+
+# CLI 帮助
+MENU_CLI_TEST="测试模式"
+MENU_CLI_HELP="帮助列表"
+MENU_CLI_UNINSTALL="卸载脚本"
+MENU_CLI_INIT="初始化脚本"
+MENU_CLI_DEBUG="调试运行"
+MENU_CLI_START="启动服务"
+MENU_CLI_STOP="停止服务"
+MENU_CLI_STATUS="查看状态"
+
+# 帮助信息
+MENU_HELP_ONLINE="在线求助："
+MENU_HELP_GITHUB="GitHub："
+MENU_HELP_DOCS="文档："

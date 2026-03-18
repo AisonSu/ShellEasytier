@@ -1,0 +1,39 @@
+# 中继服务器配置
+
+RELAY_MENU_TITLE="中继服务器"
+RELAY_MENU_DESC="配置中继服务器以改善连接性"
+
+# 中继说明
+RELAY_DESC="当节点间无法直接 P2P 连接时，可以通过中继服务器转发流量。"
+RELAY_DESC_2="中继服务器无法解密您的流量，数据始终端到端加密。"
+
+# 菜单选项
+RELAY_MENU_LIST="查看中继服务器"
+RELAY_MENU_ADD="添加中继服务器"
+RELAY_MENU_DEL="删除中继服务器"
+RELAY_MENU_PUBLIC="使用公共中继"
+RELAY_MENU_CUSTOM="使用自定义中继"
+
+# 公共中继
+RELAY_PUBLIC_ENABLE="启用公共中继服务器"
+RELAY_PUBLIC_DISABLE="禁用公共中继服务器"
+RELAY_PUBLIC_DESC="公共中继由社区提供，可能存在不稳定的情况"
+
+# 输入提示
+RELAY_INPUT_ADDRESS="请输入中继服务器地址: "
+RELAY_INPUT_EXAMPLE="例如: tcp://relay.example.com:11010"
+
+# 提示信息
+RELAY_ADD_OK="中继服务器添加成功！"
+RELAY_ADD_FAIL="地址格式无效！"
+RELAY_DEL_OK="中继服务器删除成功！"
+RELAY_SET_OK="中继配置已保存！"
+
+# 当前配置
+RELAY_CURRENT="当前中继配置"
+RELAY_CURRENT_EMPTY="未配置中继服务器"
+RELAY_CURRENT_PUBLIC="公共中继: 已启用"
+RELAY_CURRENT_CUSTOM="自定义中继数"
+
+# 建议
+RELAY_SUGGEST="建议: 优先使用 P2P 连接，中继作为后备"

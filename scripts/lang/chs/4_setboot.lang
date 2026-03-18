@@ -1,0 +1,31 @@
+# 启动设置
+
+BOOT_MENU_TITLE="启动设置"
+BOOT_MENU_DESC="配置开机自启动和其他启动选项"
+
+# 自启动选项
+BOOT_MENU_AUTOSTART="开机自启动"
+BOOT_MENU_AUTOSTART_SET="设置自启动"
+BOOT_MENU_AUTOSTART_UNSET="取消自启动"
+
+# 启动模式
+BOOT_MENU_MODE="启动模式"
+BOOT_MODE_TUN="TUN 模式 (需要 root)"
+BOOT_MODE_NO_TUN="无 TUN 模式 (SOCKS5代理)"
+
+# 当前状态
+BOOT_CURRENT="当前设置"
+BOOT_CURRENT_AUTOSTART="开机自启动: 已启用"
+BOOT_CURRENT_NO_AUTOSTART="开机自启动: 未启用"
+BOOT_CURRENT_MODE_TUN="启动模式: TUN 模式"
+BOOT_CURRENT_MODE_NOTUN="启动模式: 无 TUN 模式"
+
+# 提示信息
+BOOT_SET_OK="自启动设置成功！"
+BOOT_UNSET_OK="已取消自启动！"
+BOOT_MODE_SET="启动模式已设置"
+
+# 小米路由器特定
+BOOT_MI_NOTE="小米路由器说明"
+BOOT_MI_DESC="脚本将通过 crontab 和 rc.local 实现自启动"
+BOOT_MI_SUGGEST="建议安装到 /data 或 /userdisk 目录以支持软固化"

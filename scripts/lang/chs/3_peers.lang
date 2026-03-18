@@ -1,0 +1,46 @@
+# 对等节点管理
+
+PEER_MENU_TITLE="对等节点管理"
+PEER_MENU_DESC="管理 EasyTier 对等节点连接"
+
+# 节点管理选项
+PEER_MENU_LIST="查看节点列表"
+PEER_MENU_ADD="添加对等节点"
+PEER_MENU_DEL="删除对等节点"
+PEER_MENU_EDIT="编辑节点"
+
+# 节点类型
+PEER_TYPE_TCP="TCP 节点"
+PEER_TYPE_UDP="UDP 节点"
+PEER_TYPE_WS="WebSocket 节点"
+PEER_TYPE_WSS="WebSocket TLS 节点"
+PEER_TYPE_QUIC="QUIC 节点"
+
+# 添加节点
+PEER_ADD_TITLE="添加对等节点"
+PEER_ADD_DESC="请输入节点地址，格式: protocol://host:port"
+PEER_ADD_EXAMPLE="例如: tcp://192.168.1.100:11010 或 udp://peer.example.com:11010"
+PEER_INPUT_ADDRESS="请输入节点地址: "
+PEER_INPUT_ALIAS="请输入节点别名 (可选): "
+
+# 节点列表
+PEER_LIST_TITLE="对等节点列表"
+PEER_LIST_EMPTY="暂无对等节点配置"
+PEER_LIST_COUNT="已配置节点数"
+
+# 提示信息
+PEER_ADD_OK="节点添加成功！"
+PEER_ADD_FAIL="节点添加失败！"
+PEER_DEL_OK="节点删除成功！"
+PEER_DEL_CONFIRM="确认删除此节点？"
+PEER_EDIT_OK="节点修改成功！"
+
+# 节点状态
+PEER_STATUS_CONNECTED="已连接"
+PEER_STATUS_DISCONNECTED="未连接"
+PEER_STATUS_CONNECTING="连接中"
+PEER_STATUS_ERROR="连接错误"
+
+# 选择提示
+PEER_SELECT_DEL="请选择要删除的节点编号"
+PEER_SELECT_EDIT="请选择要编辑的节点编号"

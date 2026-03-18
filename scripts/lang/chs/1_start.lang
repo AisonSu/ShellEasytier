@@ -1,0 +1,22 @@
+# 启动/停止服务
+
+START_SERVICE_OK="服务启动成功！"
+START_SERVICE_FAIL="服务启动失败！"
+START_SERVICE_STOPPED="服务已停止！"
+START_SERVICE_NOT_RUNNING="服务未运行！"
+START_NO_CORE="未找到 EasyTier 核心文件！"
+START_NO_CORE_DOWNLOAD="是否立即下载？"
+START_DOWNLOADING="正在下载 EasyTier 核心..."
+START_DOWNLOAD_OK="下载成功！"
+START_DOWNLOAD_FAIL="下载失败，请检查网络或手动下载！"
+
+START_CORE_RUNNING="EasyTier 核心正在运行"
+START_CORE_STOP_CONFIRM="是否停止当前服务？"
+
+START_PEER_CONNECTING="正在连接对等节点..."
+START_PEER_CONNECTED="已连接到网络"
+START_PEER_DISCONNECTED="未连接到任何对等节点"
+
+START_HINT="启动提示"
+START_HINT_DHCP="使用 DHCP 模式自动获取虚拟 IP"
+START_HINT_STATIC="使用静态虚拟 IP"
