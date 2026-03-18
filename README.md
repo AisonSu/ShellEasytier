@@ -110,6 +110,42 @@ ShellEasytier/
 
 MIT License
 
+## 开发测试
+
+### Docker 测试
+
+项目提供完整的 Docker 测试环境：
+
+```sh
+# 一键运行所有测试
+sh scripts/docker-test.sh
+
+# 或使用 Makefile
+make docker-test
+
+# 使用 docker-compose
+docker-compose -f docker-compose.test.yml up --build
+```
+
+### 本地测试
+
+```sh
+# 运行自动化测试套件
+sh test/test.sh
+
+# 运行模拟环境测试
+sh test/mock_test.sh
+
+# 静态代码检查
+make lint
+```
+
+### GitHub Actions CI
+
+项目配置了自动化的 GitHub Actions 工作流：
+- **CI 工作流**: 本地测试 + ShellCheck + Docker 测试
+- **Docker 测试**: 多架构测试 (amd64/arm64/armv7)
+
 ## 相关项目
 
 - [EasyTier](https://github.com/EasyTier/EasyTier) - 去中心化 VPN 组网工具
