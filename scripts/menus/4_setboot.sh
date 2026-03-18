@@ -35,7 +35,7 @@ set_autostart() {
 # 取消自启动
 do_unset_autostart() {
     # 调用库的取消函数
-    . "$EASYDIR"/libs/check_autostart.sh
+    . "$EASYDIR"/scripts/libs/check_autostart.sh
     unset_autostart
 
     # 额外清理 OpenWrt

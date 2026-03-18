@@ -20,7 +20,7 @@ uninstall() {
     stop_easytier 2>/dev/null
 
     # 取消自启动
-    . "$EASYDIR"/libs/check_autostart.sh
+    . "$EASYDIR"/scripts/libs/check_autostart.sh
     unset_autostart
 
     # 移除别名

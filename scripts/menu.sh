@@ -10,16 +10,16 @@ EASYDIR=$(
 CFG_PATH="$EASYDIR"/configs/ShellEasytier.cfg
 
 # 加载执行目录，失败则初始化
-. "$EASYDIR"/libs/get_config.sh 2>/dev/null
+. "$EASYDIR"/scripts/libs/get_config.sh 2>/dev/null
 [ -z "$EASY_BINDIR" -o -z "$EASY_TMPDIR" ] && . "$EASYDIR"/scripts/init.sh >/dev/null 2>&1
 [ ! -f "$EASY_TMPDIR" ] && mkdir -p "$EASY_TMPDIR"
 
 # 通用工具
-. "$EASYDIR"/libs/set_config.sh
-. "$EASYDIR"/libs/web_get.sh
-. "$EASYDIR"/libs/i18n.sh
-. "$EASYDIR"/libs/service.sh
-. "$EASYDIR"/libs/check_autostart.sh
+. "$EASYDIR"/scripts/libs/set_config.sh
+. "$EASYDIR"/scripts/libs/web_get.sh
+. "$EASYDIR"/scripts/libs/i18n.sh
+. "$EASYDIR"/scripts/libs/service.sh
+. "$EASYDIR"/scripts/libs/check_autostart.sh
 . "$EASYDIR"/menus/tui_layout.sh
 . "$EASYDIR"/menus/common.sh
 . "$EASYDIR"/menus/1_start.sh
