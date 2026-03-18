@@ -57,9 +57,13 @@ error_down() {
 # 检测系统类型
 detect_system() {
     systype=""
+    # 优先检测小米（特有的 crontab 路径）
     [ -f "/data/etc/crontabs/root" ] && systype="xiaomi"
-    [ -f "/etc/rc.common" ] && [ "$(cat /proc/1/comm)" = "procd" ] && systype="openwrt"
+    # 检测 OpenWrt（小米也有 /etc/rc.common，所以只在未检测到时才设置）
+    [ -z "$systype" ] && [ -f "/etc/rc.common" ] && [ "$(cat /proc/1/comm)" = "procd" ] && systype="openwrt"
+    # 检测 ASUS
     [ -d "/jffs" ] && systype="asus"
+    # 默认
     [ -z "$systype" ] && systype="generic"
     echo "$systype"
 }

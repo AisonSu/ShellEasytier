@@ -4,19 +4,23 @@
 
 # 检测系统类型
 systype=""
-[ -f "/etc/storage/started_script.sh" ] && {
+# 小米路由器（优先检测特有的 crontab 路径）
+[ -f "/data/etc/crontabs/root" ] && systype=mi_snapshot
+# Padavan
+[ -z "$systype" ] && [ -f "/etc/storage/started_script.sh" ] && {
     systype=Padavan
     initdir='/etc/storage/started_script.sh'
 }
-[ -d "/jffs" ] && {
+# ASUS（只在未检测到时）
+[ -z "$systype" ] && [ -d "/jffs" ] && {
     systype=asusrouter
     [ -f "/jffs/.asusrouter" ] && initdir='/jffs/.asusrouter'
     [ -d "/jffs/scripts" ] && initdir='/jffs/scripts/nat-start'
     nvram set jffs2_scripts="1"
     nvram commit
 }
-[ -f "/data/etc/crontabs/root" ] && systype=mi_snapshot
-[ -w "/var/mnt/cfg/firewall" ] && systype=ng_snapshot
+# ng_snapshot
+[ -z "$systype" ] && [ -w "/var/mnt/cfg/firewall" ] && systype=ng_snapshot
 
 # 容器环境检测
 grep -qE '/(docker|lxc|kubepods|crio|containerd)/' /proc/1/cgroup 2>/dev/null || [ -f /run/.containerenv ] || [ -f /.dockerenv ] && systype='container'

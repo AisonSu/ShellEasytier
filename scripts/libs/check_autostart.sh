@@ -22,10 +22,10 @@ check_autostart() {
 # 获取系统类型
 get_systype() {
     systype=""
-    # 小米设备
+    # 小米设备（优先检测）
     [ -f /data/etc/crontabs/root ] && systype="mi_snapshot"
-    # OpenWrt
-    [ -f /etc/rc.common ] && [ "$(cat /proc/1/comm)" = "procd" ] && systype="openwrt"
+    # OpenWrt（小米也有 rc.common，所以只在未检测到时设置）
+    [ -z "$systype" ] && [ -f /etc/rc.common ] && [ "$(cat /proc/1/comm)" = "procd" ] && systype="openwrt"
     # 通用 Linux
     [ -z "$systype" ] && systype="generic"
     echo "$systype"
