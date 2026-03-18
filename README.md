@@ -43,7 +43,9 @@ sh -c "$(wget -qO- https://raw.githubusercontent.com/AisonSu/ShellEasytier/main/
 
 1. 下载安装包:
 ```sh
-wget https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz
+# 获取最新版本号并下载
+LATEST=$(curl -sL https://api.github.com/repos/AisonSu/ShellEasytier/releases/latest | grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
+wget https://github.com/AisonSu/ShellEasytier/releases/download/${LATEST}/ShellEasytier.tar.gz
 ```
 
 2. 解压到目标目录:

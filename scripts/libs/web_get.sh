@@ -55,8 +55,12 @@ download_easytier() {
             ;;
     esac
 
-    # 下载地址
-    ET_URL="https://github.com/EasyTier/EasyTier/releases/latest/download/easytier-linux-${ET_ARCH}.zip"
+    # 获取 EasyTier 最新版本号
+    et_version=$(curl -sL --connect-timeout 5 "https://api.github.com/repos/EasyTier/EasyTier/releases/latest" 2>/dev/null | grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
+    [ -z "$et_version" ] && et_version="v2.4.5"
+
+    # 下载地址（使用具体版本，避免 latest 重定向延迟）
+    ET_URL="https://github.com/EasyTier/EasyTier/releases/download/${et_version}/easytier-linux-${ET_ARCH}.zip"
 
     # 下载到临时目录
     tmp_file="/tmp/easytier-linux-${ET_ARCH}.zip"
