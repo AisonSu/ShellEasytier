@@ -30,20 +30,20 @@ ShellEasytier 是一个专为嵌入式设备（如小米路由器）设计的 Ea
 ### 一键安装
 
 ```sh
-sh -c "$(curl -fsSL https://github.com/EasyTier/ShellEasytier/raw/main/install.sh)"
+sh -c "$(curl -fsSL https://github.com/AisonSu/ShellEasytier/raw/main/install.sh)"
 ```
 
 或使用 wget:
 
 ```sh
-sh -c "$(wget -qO- https://github.com/EasyTier/ShellEasytier/raw/main/install.sh)"
+sh -c "$(wget -qO- https://github.com/AisonSu/ShellEasytier/raw/main/install.sh)"
 ```
 
 ### 手动安装
 
 1. 下载安装包:
 ```sh
-wget https://github.com/EasyTier/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz
+wget https://github.com/AisonSu/ShellEasytier/releases/latest/download/ShellEasytier.tar.gz
 ```
 
 2. 解压到目标目录:

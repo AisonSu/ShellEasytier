@@ -9,7 +9,7 @@ echo "**        EasyTier 客户端 for 路由器         **"
 echo "***********************************************"
 
 # 安装源
-[ -z "$url" ] && url="https://github.com/EasyTier/ShellEasytier/raw/main"
+[ -z "$url" ] && url="https://github.com/AisonSu/ShellEasytier/raw/main"
 
 # 内置工具
 cecho() {
