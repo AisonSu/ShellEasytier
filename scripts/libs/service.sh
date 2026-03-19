@@ -84,9 +84,9 @@ start_easytier() {
         [ "$EASY_NO_TUN" = "1" ] && args="$args --no-tun"
     fi
 
-    # 启动服务
+    # 启动服务（使用 & 后台运行，不依赖 nohup）
     cd "$EASY_TMPDIR" || exit 1
-    nohup "$EASYDIR/bin/easytier-core" $args >> "$EASY_TMPDIR/easytier.log" 2>&1 &
+    "$EASYDIR/bin/easytier-core" $args >> "$EASY_TMPDIR/easytier.log" 2>&1 &
     pid=$!
     echo $pid > "$PID_FILE"
 
