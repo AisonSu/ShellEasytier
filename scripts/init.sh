@@ -22,8 +22,12 @@ systype=""
 # ng_snapshot
 [ -z "$systype" ] && [ -w "/var/mnt/cfg/firewall" ] && systype=ng_snapshot
 
-# 容器环境检测
-grep -qE '/(docker|lxc|kubepods|crio|containerd)/' /proc/1/cgroup 2>/dev/null || [ -f /run/.containerenv ] || [ -f /.dockerenv ] && systype='container'
+# 容器环境检测（只在未检测到特定系统时）
+[ -z "$systype" ] && {
+    if grep -qE '/(docker|lxc|kubepods|crio|containerd)/' /proc/1/cgroup 2>/dev/null || [ -f /run/.containerenv ] || [ -f /.dockerenv ]; then
+        systype='container'
+    fi
+}
 
 # 设置安装目录
 [ "$systype" = 'container' ] && EASYDIR='/etc/ShellEasytier'
