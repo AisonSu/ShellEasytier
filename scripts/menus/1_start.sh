@@ -54,8 +54,8 @@ start_core() {
     # 检查核心
     check_and_download_core || return 1
 
-    # 检查网络配置
-    if [ -z "$EASY_NETWORK_NAME" ] && [ -z "$EASY_DHCP" ]; then
+    # 检查网络配置（本地模式需要网络名称或DHCP，Config-Server模式不需要）
+    if [ -z "$EASY_CONFIG_SERVER" ] && [ -z "$EASY_NETWORK_NAME" ] && [ -z "$EASY_DHCP" ]; then
         comp_box "\033[33mNetwork not configured!\033[0m" \
             "Please configure network settings first."
         sleep 2
