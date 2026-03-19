@@ -8,6 +8,21 @@ echo "**              ShellEasytier                **"
 echo "**        EasyTier 客户端 for 路由器         **"
 echo "***********************************************"
 
+# 检测架构
+detect_arch() {
+    arch=$(uname -m)
+    case "$arch" in
+        x86_64|amd64)     echo "x86_64" ;;
+        aarch64|arm64)    echo "aarch64" ;;
+        armv7l|armv7)     echo "armv7" ;;
+        mips)             echo "mips" ;;
+        mipsel)           echo "mipsel" ;;
+        *)                echo "generic" ;;
+    esac
+}
+
+ARCH=$(detect_arch)
+
 # 获取最新版本号
 cecho() {
     printf '%b\n' "$*"
@@ -21,14 +36,15 @@ LATEST_VERSION=$(curl -sL --connect-timeout 5 \
 # 如果获取失败，使用默认版本
 if [ -z "$LATEST_VERSION" ]; then
     cecho "\033[33m无法获取最新版本，使用默认版本\033[0m"
-    LATEST_VERSION="v1.2.2"
+    LATEST_VERSION="v1.2.5"
 fi
 
 echo "**       最新版本: $LATEST_VERSION              **"
+echo "**       架构: $ARCH                            **"
 echo "***********************************************"
 
 # 安装源
-[ -z "$url" ] && url="https://github.com/AisonSu/ShellEasytier/raw/main"
+[ -z "$url" ] && url="https://github.com/AisonSu/ShellEasytier/releases/download/${LATEST_VERSION}"
 
 # 内置工具
 cecho() {
@@ -190,15 +206,26 @@ install_main() {
     # 创建目录
     mkdir -p "$EASYDIR"
 
-    # 下载安装包
-    cecho "\033[36m正在下载 ShellEasytier...\033[0m"
+    # 下载架构特定的安装包
+    cecho "\033[36m正在下载 ShellEasytier (${ARCH})...\033[0m"
+
+    # 先尝试下载架构特定版本
     webget /tmp/ShellEasytier.tar.gz \
-        "https://github.com/AisonSu/ShellEasytier/releases/download/${LATEST_VERSION}/ShellEasytier.tar.gz" \
+        "https://github.com/AisonSu/ShellEasytier/releases/download/${LATEST_VERSION}/ShellEasytier-${ARCH}.tar.gz" \
         echooff
+
+    # 如果失败，尝试下载通用版本
+    if [ "$result" != "200" ]; then
+        cecho "\033[33m架构特定版本下载失败，尝试通用版本...\033[0m"
+        webget /tmp/ShellEasytier.tar.gz \
+            "https://github.com/AisonSu/ShellEasytier/releases/download/${LATEST_VERSION}/ShellEasytier-generic.tar.gz" \
+            echooff
+    fi
 
     if [ "$result" != "200" ]; then
         cecho "\033[31m下载失败！请检查网络或手动安装。\033[0m"
-        cecho "\033[90m下载URL: https://github.com/AisonSu/ShellEasytier/releases/download/${LATEST_VERSION}/ShellEasytier.tar.gz\033[0m"
+        cecho "\033[90m尝试下载: ShellEasytier-${ARCH}.tar.gz\033[0m"
+        cecho "\033[90m或: ShellEasytier-generic.tar.gz\033[0m"
         cecho "\033[90m版本: $LATEST_VERSION\033[0m"
         error_down
         exit 1
@@ -260,13 +287,6 @@ install_main() {
         cecho "\033[33m未找到适合架构 ${arch} 的 EasyTier 二进制\033[0m"
         cecho "\033[33m请手动下载 EasyTier 到 $EASYDIR/bin/\033[0m"
         cecho "\033[36m地址: https://github.com/EasyTier/EasyTier/releases\033[0m"
-    fi
-        cecho "\033[36m下载地址: https://github.com/EasyTier/EasyTier/releases\033[0m"
-        if [ "$ET_ARCH" = "unknown" ]; then
-            cecho "\033[36m检测到架构: ${arch} (未知架构，请手动选择)\033[0m"
-        else
-            cecho "\033[36m架构: easytier-linux-${ET_ARCH}-${et_version}.zip\033[0m"
-        fi
     fi
 
     # 运行初始化

@@ -1,4 +1,4 @@
-name: Update Version on Release
+name: Build and Release
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  update-version:
+  build-and-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,68 +24,104 @@ jobs:
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Version: $VERSION"
 
-    - name: Update version file and commit
+    - name: Update version file
       run: |
         VERSION="${{ steps.get_version.outputs.VERSION }}"
         echo "$VERSION" > version
         echo "Updated version file to: $VERSION"
-        cat version
 
-    - name: Commit and push version update
+    - name: Commit version update
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add version
-        git commit -m "chore: update version to ${{ steps.get_version.outputs.VERSION }} [skip ci]" || echo "No changes to commit"
-        git push origin HEAD:main --force || echo "Push failed"
+        git commit -m "chore: update version to ${{ steps.get_version.outputs.VERSION }} [skip ci]" || echo "No changes"
+        git push origin HEAD:main || echo "Push failed"
 
-    - name: Re-checkout with updated version
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    - name: Verify version file
+    - name: Get EasyTier version
+      id: get_et_version
       run: |
-        echo "Version file content:"
-        cat version
-
-    - name: Download EasyTier binaries
-      run: |
-        # 获取 EasyTier 最新版本
         ET_VERSION=$(curl -sL --connect-timeout 10 "https://api.github.com/repos/EasyTier/EasyTier/releases/latest" | grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
         [ -z "$ET_VERSION" ] && ET_VERSION="v2.4.5"
+        echo "ET_VERSION=$ET_VERSION" >> $GITHUB_OUTPUT
         echo "EasyTier version: $ET_VERSION"
 
-        # 创建 bin 目录
-        mkdir -p bin
-
-        # 下载各个架构的 EasyTier
-        ET_ARCHS="x86_64 aarch64 armv7 mips mipsel"
-        for arch in $ET_ARCHS; do
-          echo "Downloading easytier-linux-${arch}..."
-          curl -sL --connect-timeout 10 "https://github.com/EasyTier/EasyTier/releases/download/${ET_VERSION}/easytier-linux-${arch}-${ET_VERSION}.zip" -o "/tmp/easytier-${arch}.zip" || continue
-          unzip -o "/tmp/easytier-${arch}.zip" -d "/tmp/easytier-${arch}/" 2>/dev/null || continue
-          # 复制 easytier-core 到 bin 目录，重命名为包含架构名
-          cp "/tmp/easytier-${arch}/easytier-core" "bin/easytier-core-${arch}" 2>/dev/null || true
-          rm -rf "/tmp/easytier-${arch}.zip" "/tmp/easytier-${arch}/"
-        done
-
-        # 为当前架构创建默认的 easytier-core 链接
-        ls -la bin/
-
-    - name: Create Release Package
+    - name: Build packages for all architectures
       run: |
         VERSION="${{ steps.get_version.outputs.VERSION }}"
-        BUILD_DIR="/tmp/selleasytier_build"
+        ET_VERSION="${{ steps.get_et_version.outputs.ET_VERSION }}"
 
-        # 清理并创建构建目录
+        # 定义架构列表
+        ARCHS="x86_64 aarch64 armv7 mips mipsel"
+
+        for ARCH in $ARCHS; do
+          echo "========================================="
+          echo "Building for architecture: $ARCH"
+          echo "========================================="
+
+          BUILD_DIR="/tmp/selleasytier_build_${ARCH}"
+          rm -rf "$BUILD_DIR"
+          mkdir -p "$BUILD_DIR/bin"
+
+          # 复制脚本文件
+          cp -r scripts "$BUILD_DIR/"
+          cp -r starts "$BUILD_DIR/"
+          cp version "$BUILD_DIR/"
+          cp README.md "$BUILD_DIR/" 2>/dev/null || true
+          cp LICENSE "$BUILD_DIR/" 2>/dev/null || true
+          cp install.sh "$BUILD_DIR/"
+          cp build.sh "$BUILD_DIR/"
+          cp Makefile "$BUILD_DIR/" 2>/dev/null || true
+          cp Dockerfile.test "$BUILD_DIR/" 2>/dev/null || true
+          cp docker-compose.test.yml "$BUILD_DIR/" 2>/dev/null || true
+          cp .dockerignore "$BUILD_DIR/" 2>/dev/null || true
+
+          # 下载对应架构的 EasyTier
+          echo "Downloading EasyTier for $ARCH..."
+          curl -sL --connect-timeout 30 \
+            "https://github.com/EasyTier/EasyTier/releases/download/${ET_VERSION}/easytier-linux-${ARCH}-${ET_VERSION}.zip" \
+            -o "/tmp/easytier-${ARCH}.zip" || {
+            echo "Failed to download for $ARCH, will try without binary"
+            continue
+          }
+
+          # 解压
+          unzip -o "/tmp/easytier-${ARCH}.zip" -d "/tmp/easytier-${ARCH}/" 2>/dev/null || {
+            echo "Failed to extract for $ARCH"
+            continue
+          }
+
+          # 复制 easytier-core
+          cp "/tmp/easytier-${ARCH}/easytier-core" "$BUILD_DIR/bin/easytier-core" 2>/dev/null || \
+          cp "/tmp/easytier-${ARCH}/easytier-linux-${ARCH}/easytier-core" "$BUILD_DIR/bin/easytier-core" 2>/dev/null || {
+            echo "Could not find easytier-core for $ARCH"
+            find "/tmp/easytier-${ARCH}/" -type f
+          }
+
+          if [ -f "$BUILD_DIR/bin/easytier-core" ]; then
+            chmod +x "$BUILD_DIR/bin/easytier-core"
+            echo "✓ EasyTier binary added for $ARCH"
+          fi
+
+          # 创建架构特定的压缩包
+          tar -czf "ShellEasytier-${ARCH}.tar.gz" -C "$BUILD_DIR" .
+          ls -lh "ShellEasytier-${ARCH}.tar.gz"
+
+          # 清理
+          rm -rf "$BUILD_DIR" "/tmp/easytier-${ARCH}.zip" "/tmp/easytier-${ARCH}/"
+        done
+
+        # 也创建一个通用包（不含二进制，需要运行时下载）
+        echo "========================================="
+        echo "Building generic package (no binary)"
+        echo "========================================="
+
+        BUILD_DIR="/tmp/selleasytier_build_generic"
         rm -rf "$BUILD_DIR"
-        mkdir -p "$BUILD_DIR"
+        mkdir -p "$BUILD_DIR/bin"
 
-        # 复制文件（确保使用更新后的 version 文件）
         cp -r scripts "$BUILD_DIR/"
         cp -r starts "$BUILD_DIR/"
-        cp -r bin "$BUILD_DIR/"
         cp version "$BUILD_DIR/"
         cp README.md "$BUILD_DIR/" 2>/dev/null || true
         cp LICENSE "$BUILD_DIR/" 2>/dev/null || true
@@ -96,25 +132,15 @@ jobs:
         cp docker-compose.test.yml "$BUILD_DIR/" 2>/dev/null || true
         cp .dockerignore "$BUILD_DIR/" 2>/dev/null || true
 
-        # 验证 version 文件
-        echo "Build dir version file:"
-        cat "$BUILD_DIR/version"
+        tar -czf "ShellEasytier-generic.tar.gz" -C "$BUILD_DIR" .
+        ls -lh "ShellEasytier-generic.tar.gz"
 
-        # 显示 bin 目录内容
-        echo "Binaries:"
-        ls -la "$BUILD_DIR/bin/"
+        rm -rf "$BUILD_DIR"
 
-        # 创建压缩包
-        tar -czf "ShellEasytier.tar.gz" -C "$BUILD_DIR" .
-        ls -lh ShellEasytier.tar.gz
-
-        # 验证压缩包内的 version 文件
-        echo "Package version file content:"
-        tar -O -zxf ShellEasytier.tar.gz version
-
-    - name: Upload Release Asset
+    - name: Upload Release Assets
       uses: softprops/action-gh-release@v1
       with:
-        files: ShellEasytier.tar.gz
+        files: |
+          ShellEasytier-*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
