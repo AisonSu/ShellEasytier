@@ -232,23 +232,9 @@ install_main() {
         rm -rf /tmp/se_configs_backup
     fi
 
-    # 检查 unzip 是否可用
-    if ! command -v unzip >/dev/null 2>&1 && ! command -v busybox >/dev/null 2>&1; then
-        echo "-----------------------------------------------"
-        cecho "\033[33m警告: 未找到 unzip 命令\033[0m"
-        cecho "\033[33m请手动安装 unzip 后再运行安装:\033[0m"
-        cecho "  opkg update && opkg install unzip    # OpenWrt"
-        cecho "  或"
-        cecho "  apt-get install unzip               # Debian/Ubuntu"
-        cecho ""
-        cecho "\033[33m或者先安装 ShellEasytier，然后手动下载 EasyTier:\033[0m"
-        cecho "  https://github.com/EasyTier/EasyTier/releases"
-        sleep 3
-    fi
-
-    # 下载 EasyTier 二进制
+    # 安装 EasyTier 二进制（预下载在包中）
     echo "-----------------------------------------------"
-    cecho "\033[36m正在下载 EasyTier 核心...\033[0m"
+    cecho "\033[36m正在安装 EasyTier 核心...\033[0m"
 
     # 检测架构
     arch=$(uname -m)
@@ -262,51 +248,19 @@ install_main() {
         *)       ET_ARCH="unknown" ;;
     esac
 
-    # 获取最新版本号
-    cecho "\033[36m正在获取 EasyTier 最新版本...\033[0m"
-    et_version=$(curl -sL --connect-timeout 5 "https://api.github.com/repos/EasyTier/EasyTier/releases/latest" 2>/dev/null | grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
-    [ -z "$et_version" ] && et_version="v2.4.5"
-    cecho "\033[36m最新版本: $et_version\033[0m"
-
-    # 下载 EasyTier - 尝试多个镜像
-    cecho "\033[36m正在下载 EasyTier...\033[0m"
-
-    et_mirrors="
-        https://ghproxy.com/https://github.com/EasyTier/EasyTier/releases/download/${et_version}/easytier-linux-${ET_ARCH}-${et_version}.zip
-        https://mirror.ghproxy.com/https://github.com/EasyTier/EasyTier/releases/download/${et_version}/easytier-linux-${ET_ARCH}-${et_version}.zip
-        https://github.com/EasyTier/EasyTier/releases/download/${et_version}/easytier-linux-${ET_ARCH}-${et_version}.zip
-    "
-
-    et_downloaded=0
-    for mirror in $et_mirrors; do
-        cecho "\033[33m尝试下载源: $(echo $mirror | cut -d'/' -f3)\033[0m"
-        webget /tmp/easytier.zip "$mirror" echooff 2>/dev/null
-        if [ "$result" = "200" ]; then
-            et_downloaded=1
-            break
-        fi
-    done
-
-    if [ "$et_downloaded" = "1" ]; then
-        cecho "\033[32m下载成功！\033[0m"
-        # 解压 EasyTier
-        if command -v unzip >/dev/null 2>&1; then
-            unzip -o /tmp/easytier.zip -d "$EASYDIR/bin/" 2>/dev/null
-            chmod +x "$EASYDIR/bin/"* 2>/dev/null
-            cecho "\033[32mEasyTier 下载成功！\033[0m"
-        else
-            # 尝试使用 busybox unzip
-            if busybox unzip -o /tmp/easytier.zip -d "$EASYDIR/bin/" 2>/dev/null; then
-                chmod +x "$EASYDIR/bin/"* 2>/dev/null
-                cecho "\033[32mEasyTier 下载成功！\033[0m"
-            else
-                cecho "\033[33m未找到 unzip，请手动解压 /tmp/easytier.zip 到 $EASYDIR/bin/\033[0m"
-                cecho "\033[36m命令: mkdir -p $EASYDIR/bin \u0026\u0026 unzip /tmp/easytier.zip -d $EASYDIR/bin/\033[0m"
-            fi
-        fi
-        rm -f /tmp/easytier.zip
+    # 查找对应的二进制文件
+    if [ "$ET_ARCH" != "unknown" ] && [ -f "$EASYDIR/bin/easytier-core-${ET_ARCH}" ]; then
+        cp "$EASYDIR/bin/easytier-core-${ET_ARCH}" "$EASYDIR/bin/easytier-core"
+        chmod +x "$EASYDIR/bin/easytier-core"
+        cecho "\033[32mEasyTier 安装成功！ (${ET_ARCH})\033[0m"
+    elif [ -f "$EASYDIR/bin/easytier-core" ]; then
+        # 如果已经存在默认的 easytier-core
+        cecho "\033[32mEasyTier 已存在\033[0m"
     else
-        cecho "\033[33mEasyTier 下载失败，请手动下载安装到 $EASYDIR/bin/\033[0m"
+        cecho "\033[33m未找到适合架构 ${arch} 的 EasyTier 二进制\033[0m"
+        cecho "\033[33m请手动下载 EasyTier 到 $EASYDIR/bin/\033[0m"
+        cecho "\033[36m地址: https://github.com/EasyTier/EasyTier/releases\033[0m"
+    fi
         cecho "\033[36m下载地址: https://github.com/EasyTier/EasyTier/releases\033[0m"
         if [ "$ET_ARCH" = "unknown" ]; then
             cecho "\033[36m检测到架构: ${arch} (未知架构，请手动选择)\033[0m"

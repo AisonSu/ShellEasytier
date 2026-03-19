@@ -49,6 +49,30 @@ jobs:
         echo "Version file content:"
         cat version
 
+    - name: Download EasyTier binaries
+      run: |
+        # 获取 EasyTier 最新版本
+        ET_VERSION=$(curl -sL --connect-timeout 10 "https://api.github.com/repos/EasyTier/EasyTier/releases/latest" | grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
+        [ -z "$ET_VERSION" ] && ET_VERSION="v2.4.5"
+        echo "EasyTier version: $ET_VERSION"
+
+        # 创建 bin 目录
+        mkdir -p bin
+
+        # 下载各个架构的 EasyTier
+        ET_ARCHS="x86_64 aarch64 armv7 mips mipsel"
+        for arch in $ET_ARCHS; do
+          echo "Downloading easytier-linux-${arch}..."
+          curl -sL --connect-timeout 10 "https://github.com/EasyTier/EasyTier/releases/download/${ET_VERSION}/easytier-linux-${arch}-${ET_VERSION}.zip" -o "/tmp/easytier-${arch}.zip" || continue
+          unzip -o "/tmp/easytier-${arch}.zip" -d "/tmp/easytier-${arch}/" 2>/dev/null || continue
+          # 复制 easytier-core 到 bin 目录，重命名为包含架构名
+          cp "/tmp/easytier-${arch}/easytier-core" "bin/easytier-core-${arch}" 2>/dev/null || true
+          rm -rf "/tmp/easytier-${arch}.zip" "/tmp/easytier-${arch}/"
+        done
+
+        # 为当前架构创建默认的 easytier-core 链接
+        ls -la bin/
+
     - name: Create Release Package
       run: |
         VERSION="${{ steps.get_version.outputs.VERSION }}"
@@ -61,7 +85,7 @@ jobs:
         # 复制文件（确保使用更新后的 version 文件）
         cp -r scripts "$BUILD_DIR/"
         cp -r starts "$BUILD_DIR/"
-        cp -r bin "$BUILD_DIR/" 2>/dev/null || mkdir -p "$BUILD_DIR/bin"
+        cp -r bin "$BUILD_DIR/"
         cp version "$BUILD_DIR/"
         cp README.md "$BUILD_DIR/" 2>/dev/null || true
         cp LICENSE "$BUILD_DIR/" 2>/dev/null || true
@@ -75,6 +99,10 @@ jobs:
         # 验证 version 文件
         echo "Build dir version file:"
         cat "$BUILD_DIR/version"
+
+        # 显示 bin 目录内容
+        echo "Binaries:"
+        ls -la "$BUILD_DIR/bin/"
 
         # 创建压缩包
         tar -czf "ShellEasytier.tar.gz" -C "$BUILD_DIR" .
