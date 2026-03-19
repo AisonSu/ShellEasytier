@@ -231,12 +231,11 @@ install_main() {
         exit 1
     fi
 
-    # 创建 EASYDIR 并解压
+    # 解压到安装目录（压缩包包含 ShellEasytier/ 目录）
     echo "-----------------------------------------------"
     cecho "\033[36m正在解压...\033[0m"
-    mkdir -p "$EASYDIR"
-    if tar -zxf /tmp/ShellEasytier.tar.gz -C "$EASYDIR/" 2>/dev/null || \
-       tar -zxf /tmp/ShellEasytier.tar.gz --no-same-owner -C "$EASYDIR/" 2>/dev/null; then
+    if tar -zxf /tmp/ShellEasytier.tar.gz -C "$dir/" 2>/dev/null || \
+       tar -zxf /tmp/ShellEasytier.tar.gz --no-same-owner -C "$dir/" 2>/dev/null; then
         cecho "\033[32m解压成功！\033[0m"
 
         # 检查压缩包内的版本
