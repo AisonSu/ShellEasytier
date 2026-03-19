@@ -103,12 +103,9 @@ jobs:
             echo "✓ EasyTier binary added for $ARCH"
           fi
 
-          # 创建架构特定的压缩包（包含 ShellEasytier 目录层级）
-          mkdir -p /tmp/release
-          cp -r "$BUILD_DIR" /tmp/release/ShellEasytier
-          tar -czf "ShellEasytier-${ARCH}.tar.gz" -C /tmp/release .
+          # 创建架构特定的压缩包（直接打包内容，不包含 ShellEasytier 目录）
+          tar -czf "ShellEasytier-${ARCH}.tar.gz" -C "$BUILD_DIR" .
           ls -lh "ShellEasytier-${ARCH}.tar.gz"
-          rm -rf /tmp/release/ShellEasytier
 
           # 清理
           rm -rf "$BUILD_DIR" "/tmp/easytier-${ARCH}.zip" "/tmp/easytier-${ARCH}/"
@@ -137,7 +134,7 @@ jobs:
 
         mkdir -p /tmp/release
         cp -r "$BUILD_DIR" /tmp/release/ShellEasytier
-        tar -czf "ShellEasytier-generic.tar.gz" -C /tmp/release .
+        tar -czf "ShellEasytier-generic.tar.gz" -C "$BUILD_DIR" .
         ls -lh "ShellEasytier-generic.tar.gz"
         rm -rf /tmp/release/ShellEasytier "$BUILD_DIR"
 
