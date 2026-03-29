@@ -80,12 +80,12 @@ ShellEasytier/
 
 默认安装源：
 
-- `https://raw.githubusercontent.com/AisonSu/ShellEasyTier/main`
+- `https://github.com/AisonSu/ShellEasyTier/releases/latest/download`
 
 中文安装入口：
 
 ```sh
-export url='https://raw.githubusercontent.com/AisonSu/ShellEasyTier/main' && \
+export url='https://github.com/AisonSu/ShellEasyTier/releases/latest/download' && \
 sh -c "$(curl -kfsSl "$url/install.sh")" && \
 . /etc/profile
 ```
@@ -93,7 +93,7 @@ sh -c "$(curl -kfsSl "$url/install.sh")" && \
 英文安装入口：
 
 ```sh
-export url='https://raw.githubusercontent.com/AisonSu/ShellEasyTier/main' && \
+export url='https://github.com/AisonSu/ShellEasyTier/releases/latest/download' && \
 sh -c "$(curl -kfsSl "$url/install_en.sh")" && \
 . /etc/profile
 ```
@@ -167,9 +167,10 @@ ACL 配置：
 
 1. `install.sh` 只下载安装脚本主体
 2. 首次启动服务时，按当前架构从以下路径下载二进制：
-   - `update_url/pkg/<arch>/easytier-core`
-   - `update_url/pkg/<arch>/easytier-cli`
-   - 如果启用 Web，则再下载 `update_url/pkg/<arch>/easytier-web-embed`
+   - `update_url/easytier-core-<arch>`
+   - `update_url/easytier-cli-<arch>`
+   - 如果启用 Web，则再下载 `update_url/easytier-web-embed-<arch>`
+3. 为兼容旧式发布目录，也支持回退到 `pkg/<arch>/...` 路径
 
 这种方式可以保持安装包很小，同时保留多架构支持能力。
 
@@ -187,10 +188,8 @@ bash prepare_pkg.sh
 bash pack_release.sh
 ```
 
-如果你使用 GitHub raw 作为默认安装源，那么目标分支根目录下必须同时发布：
-
-- `ShellEasytier.tar.gz`
-- `pkg/`
+当推送 tag 时，GitHub Actions 会在工作流中自动改写 `version` 文件、构建
+发布包，并自动发布 release assets。
 
 ## 推荐发布目标
 
@@ -199,11 +198,13 @@ bash pack_release.sh
 - `install.sh`
 - `install_en.sh`
 - `ShellEasytier.tar.gz`
-- `pkg/<arch>/...`
+- `easytier-core-<arch>`
+- `easytier-cli-<arch>`
+- `easytier-web-embed-<arch>`（支持的架构）
 
 典型发布方式：
 
-- GitHub 仓库 raw 文件
+- GitHub Releases 资产
 - 静态网站目录
 - 可公网访问的对象存储
 

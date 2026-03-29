@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ -z "$url" ] && url='https://raw.githubusercontent.com/AisonSu/ShellEasyTier/main'
+[ -z "$url" ] && url='https://github.com/AisonSu/ShellEasyTier/releases/latest/download'
 export url
 export language=en
 

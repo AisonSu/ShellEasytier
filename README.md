@@ -80,12 +80,12 @@ ShellEasytier/
 
 Default install source:
 
-- `https://raw.githubusercontent.com/AisonSu/ShellEasyTier/main`
+- `https://github.com/AisonSu/ShellEasyTier/releases/latest/download`
 
 Chinese installer:
 
 ```sh
-export url='https://raw.githubusercontent.com/AisonSu/ShellEasyTier/main' && \
+export url='https://github.com/AisonSu/ShellEasyTier/releases/latest/download' && \
 sh -c "$(curl -kfsSl "$url/install.sh")" && \
 . /etc/profile
 ```
@@ -93,7 +93,7 @@ sh -c "$(curl -kfsSl "$url/install.sh")" && \
 English installer:
 
 ```sh
-export url='https://raw.githubusercontent.com/AisonSu/ShellEasyTier/main' && \
+export url='https://github.com/AisonSu/ShellEasyTier/releases/latest/download' && \
 sh -c "$(curl -kfsSl "$url/install_en.sh")" && \
 . /etc/profile
 ```
@@ -166,9 +166,11 @@ Instead:
 
 1. `install.sh` downloads only the script release tarball
 2. First service start downloads the current architecture runtime binaries from:
-   - `update_url/pkg/<arch>/easytier-core`
-   - `update_url/pkg/<arch>/easytier-cli`
-   - `update_url/pkg/<arch>/easytier-web-embed` if enabled
+   - `update_url/easytier-core-<arch>`
+   - `update_url/easytier-cli-<arch>`
+   - `update_url/easytier-web-embed-<arch>` if enabled
+3. For backward compatibility, the runtime downloader can still fall back to
+   legacy `pkg/<arch>/...` paths when available
 
 This keeps the installer lightweight while preserving multi-architecture support.
 
@@ -186,12 +188,8 @@ Build the script release tarball:
 bash pack_release.sh
 ```
 
-If you use GitHub raw as the default install source, you must publish both:
-
-- `ShellEasytier.tar.gz`
-- `pkg/`
-
-under the repository root on the target branch.
+On tag push, GitHub Actions rewrites `version` in workflow workspace, builds the
+release tarball, and publishes release assets automatically.
 
 ## Recommended Publish Targets
 
@@ -200,11 +198,13 @@ For direct installation to work, the publish root should contain:
 - `install.sh`
 - `install_en.sh`
 - `ShellEasytier.tar.gz`
-- `pkg/<arch>/...`
+- `easytier-core-<arch>`
+- `easytier-cli-<arch>`
+- `easytier-web-embed-<arch>` where supported
 
 Examples:
 
-- GitHub raw branch content
+- GitHub Releases assets
 - A static web server
 - An object storage bucket with public HTTP access
 

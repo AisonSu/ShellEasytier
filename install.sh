@@ -6,7 +6,7 @@ echo '**               ShellEasytier                **'
 echo '***********************************************'
 
 [ -z "$language" ] && language=chs
-[ -z "$url" ] && url='https://raw.githubusercontent.com/AisonSu/ShellEasyTier/main'
+[ -z "$url" ] && url='https://github.com/AisonSu/ShellEasyTier/releases/latest/download'
 
 archive_name='ShellEasytier.tar.gz'
 archive_url="$url/$archive_name"

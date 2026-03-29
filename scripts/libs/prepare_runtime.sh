@@ -16,6 +16,16 @@ download_runtime_file() {
     fi
 }
 
+download_runtime_asset() {
+    arch="$1"
+    file="$2"
+    output="$3"
+
+    download_runtime_file "$ET_BIN_BASE_URL/${file}-${arch}" "$output" && [ -s "$output" ] && return 0
+    download_runtime_file "$ET_BIN_BASE_URL/pkg/$arch/$file" "$output" && [ -s "$output" ] && return 0
+    return 1
+}
+
 runtime_binaries_ready() {
     [ -s "$ET_BINDIR/easytier-core" ] || return 1
     [ -s "$ET_BINDIR/easytier-cli" ] || return 1
@@ -58,7 +68,7 @@ sync_runtime_binaries() {
     mkdir -p "$tmp_dl" || return 1
 
     for file in easytier-core easytier-cli; do
-        download_runtime_file "$ET_BIN_BASE_URL/$file" "$tmp_dl/$file" || {
+        download_runtime_asset "$et_arch" "$file" "$tmp_dl/$file" || {
             rm -rf "$tmp_dl"
             return 1
         }
@@ -75,7 +85,7 @@ sync_runtime_binaries() {
     done
 
     if [ "$install_web" = ON ] && [ "$ET_ALLOW_WEB" = 1 ] && [ "$ET_HAS_WEB_EMBED" = 1 ]; then
-        download_runtime_file "$ET_BIN_BASE_URL/easytier-web-embed" "$tmp_dl/easytier-web-embed" || {
+        download_runtime_asset "$et_arch" easytier-web-embed "$tmp_dl/easytier-web-embed" || {
             rm -rf "$tmp_dl"
             return 1
         }

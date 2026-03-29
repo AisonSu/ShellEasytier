@@ -30,7 +30,7 @@ detect_pkg_support() {
     ET_HAS_CLI=0
     ET_HAS_WEB_EMBED=0
 
-    [ -n "$update_url" ] && ET_BIN_BASE_URL="$update_url/pkg/$et_arch" || ET_BIN_BASE_URL=""
+    [ -n "$update_url" ] && ET_BIN_BASE_URL="$update_url" || ET_BIN_BASE_URL=""
 
     [ -n "$ET_BIN_BASE_URL" ] && ET_HAS_CORE=1
     [ -n "$ET_BIN_BASE_URL" ] && ET_HAS_CLI=1
