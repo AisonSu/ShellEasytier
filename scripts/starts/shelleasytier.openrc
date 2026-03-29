@@ -1,0 +1,12 @@
+#!/sbin/openrc-run
+
+name="ShellEasytier"
+description="ShellEasytier service"
+command="/etc/ShellEasytier/start.sh"
+command_args="daemon-run"
+command_background=false
+pidfile="/tmp/ShellEasytier/easytier.pid"
+
+depend() {
+    need net
+}

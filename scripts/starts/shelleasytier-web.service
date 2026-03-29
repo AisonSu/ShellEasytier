@@ -1,0 +1,13 @@
+[Unit]
+Description=ShellEasytier Web Service
+After=network.target syslog.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/etc/ShellEasytier/start.sh web-daemon-run
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

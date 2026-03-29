@@ -1,0 +1,12 @@
+#!/sbin/openrc-run
+
+name="ShellEasytier Web"
+description="ShellEasytier web-embed service"
+command="/etc/ShellEasytier/start.sh"
+command_args="web-daemon-run"
+command_background=false
+pidfile="/tmp/ShellEasytier/easytier-web.pid"
+
+depend() {
+    need net
+}

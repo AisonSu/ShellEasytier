@@ -1,0 +1,17 @@
+#!/bin/sh /etc/rc.common
+
+START=96
+USE_PROCD=1
+
+APPDIR=/etc/ShellEasytier
+
+start_service() {
+    procd_open_instance
+    procd_set_param command "$APPDIR/start.sh" web-daemon-run
+    procd_set_param respawn
+    procd_close_instance
+}
+
+stop_service() {
+    "$APPDIR/start.sh" web-stop >/dev/null 2>&1
+}

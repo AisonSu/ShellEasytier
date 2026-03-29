@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  shell-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate shell syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r file; do
+            if grep -qE '^#!/usr/bin/env bash|^#!/bin/bash' "$file"; then
+              bash -n "$file"
+            else
+              sh -n "$file"
+            fi
+          done < <(git ls-files '*.sh')
+
+      - name: Build release tarball
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash pack_release.sh
+          test -f ShellEasytier.tar.gz

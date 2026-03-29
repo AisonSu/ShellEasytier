@@ -1,0 +1,5 @@
+version=v2.4.5
+arch=mips
+has_core=1
+has_cli=1
+has_web_embed=0

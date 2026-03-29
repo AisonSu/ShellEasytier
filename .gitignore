@@ -1,0 +1,8 @@
+configs/ShellEasytier.cfg
+configs/command.env
+configs/*.list
+configs/acl.toml
+bin/current/
+.start_error
+.dis_startup_core
+.dis_startup_web

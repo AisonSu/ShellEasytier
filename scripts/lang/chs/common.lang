@@ -1,0 +1,4 @@
+COMMON_INPUT="请输入对应数字"
+COMMON_BACK="返回上级菜单"
+COMMON_ERR_NUM="请输入正确的数字！"
+COMMON_EMPTY="当前为空"
