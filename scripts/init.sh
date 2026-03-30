@@ -19,6 +19,7 @@ INSTALL_BINARY_STORAGE_PATH_OVERRIDE=$binary_storage_path
 . "$APPDIR/scripts/libs/get_config.sh"
 . "$APPDIR/scripts/libs/check_autostart.sh"
 . "$APPDIR/scripts/libs/check_arch.sh"
+. "$APPDIR/scripts/libs/compatibility.sh"
 . "$APPDIR/scripts/libs/prepare_runtime.sh"
 . "$APPDIR/scripts/libs/build_command.sh"
 
@@ -155,5 +156,6 @@ fi
 
 [ "$core_autostart" = ON ] && enable_core_autostart || disable_core_autostart
 [ "$web_autostart" = ON ] && enable_web_autostart || disable_web_autostart
+[ "$compat_enable" = ON ] && compat_install_firewall_hook || compat_remove_firewall_hook
 
 printf '\033[32mShellEasytier 初始化完成，请输入\033[30;47m %s \033[0;33m开始使用！\033[0m\n' "${my_alias:-et}"

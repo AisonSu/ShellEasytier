@@ -20,6 +20,7 @@ but focuses on EasyTier's networking lifecycle instead of proxy workflows.
 - Core and Web autostart managed independently
 - Local/remote menus split by responsibility
 - Advanced feature menus grouped by capability instead of one large flat list
+- Automatic firewall and ShellCrash compatibility enhancement for router targets
 - Designed for OpenWrt, Xiaomi/Redmi routers, Padavan-like firmware, and Linux
 
 ## Supported Targets
@@ -176,6 +177,32 @@ This grouping currently covers items such as:
 - ACL enablement and ACL file path
 
 This keeps the menu manageable on router terminals.
+
+## Compatibility Mode
+
+ShellEasyTier now includes a lightweight compatibility layer for router targets,
+especially OpenWrt devices that may also run ShellCrash.
+
+By default it tries to:
+
+- detect the LAN interface automatically
+- detect the EasyTier TUN interface automatically
+- add LAN <-> TUN forwarding rules
+- add MASQUERADE for zero-configuration subnet proxy return traffic
+- add ShellCrash bypass rules when ShellCrash is detected
+- repair stale high-metric EasyTier subnet routes
+- install a lightweight firewall reload hook when the platform supports it
+
+The compatibility menu keeps manual options minimal:
+
+- enable/disable compatibility enhancement
+- enable/disable ShellCrash bypass
+- enable/disable MASQUERADE
+- enable/disable route metric repair
+- optional LAN/TUN interface override only when auto-detection is wrong
+
+This is designed to reduce manual setup for typical router users while still
+keeping advanced override points available.
 
 ## Runtime Binary Delivery
 

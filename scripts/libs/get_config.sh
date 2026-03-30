@@ -24,6 +24,10 @@ load_config() {
     [ -z "$enable_exit_node" ] && enable_exit_node=OFF
     [ -z "$bind_device" ] && bind_device=OFF
     [ -z "$binary_storage_mode" ] && binary_storage_mode=auto
+    [ -z "$compat_enable" ] && compat_enable=ON
+    [ -z "$compat_shellcrash" ] && compat_shellcrash=ON
+    [ -z "$compat_masquerade" ] && compat_masquerade=ON
+    [ -z "$compat_fix_metric" ] && compat_fix_metric=ON
     [ -z "$proxy_forward_by_system" ] && proxy_forward_by_system=OFF
     [ -z "$no_listener" ] && no_listener=OFF
     [ -z "$disable_env_parsing" ] && disable_env_parsing=OFF

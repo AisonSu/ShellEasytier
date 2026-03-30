@@ -92,6 +92,21 @@ case "$1" in
         service_is_ready
         exit $?
         ;;
+    compat-apply)
+        load_config
+        compat_apply_rules
+        exit $?
+        ;;
+    compat-remove)
+        compat_remove_rules
+        compat_remove_firewall_hook
+        exit 0
+        ;;
+    compat-status)
+        load_config
+        compat_status
+        exit $?
+        ;;
     daemon-run)
         bfstart || exit 1
         . "$APPDIR/configs/command.env"

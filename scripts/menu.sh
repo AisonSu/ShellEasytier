@@ -9,6 +9,7 @@ export APPDIR
 . "$APPDIR/scripts/libs/get_config.sh"
 . "$APPDIR/scripts/libs/check_cmd.sh"
 . "$APPDIR/scripts/libs/check_autostart.sh"
+. "$APPDIR/scripts/libs/compatibility.sh"
 . "$APPDIR/scripts/libs/i18n.sh"
 . "$APPDIR/scripts/menus/common.sh"
 . "$APPDIR/scripts/menus/1_start.sh"
@@ -146,7 +147,19 @@ remote_menu() {
 }
 
 remote_advanced_menu() {
-    advanced_runtime_menu
+    while true; do
+        comp_box "$MENU_REMOTE_ADVANCED_TITLE" \
+            "1) $MENU_ADVANCED_RUNTIME_TITLE" \
+            "2) $MENU_ADVANCED_COMPAT_TITLE" \
+            "0) $COMMON_BACK"
+        read -r -p "$COMMON_INPUT> " num
+        case "$num" in
+            0|'') return ;;
+            1) advanced_runtime_menu ;;
+            2) advanced_compat_menu ;;
+            *) errornum ;;
+        esac
+    done
 }
 
 network_menu() {
@@ -381,6 +394,34 @@ advanced_acl_menu() {
     done
 }
 
+advanced_compat_menu() {
+    while true; do
+        comp_box "$MENU_ADVANCED_COMPAT_TITLE" \
+            "1) $MENU_TOGGLE_COMPAT_ENABLE: $(switch_status_text "$compat_enable")" \
+            "2) $MENU_TOGGLE_COMPAT_SHELLCRASH: $(switch_status_text "$compat_shellcrash")" \
+            "3) $MENU_TOGGLE_COMPAT_MASQUERADE: $(switch_status_text "$compat_masquerade")" \
+            "4) $MENU_TOGGLE_COMPAT_FIX_METRIC: $(switch_status_text "$compat_fix_metric")" \
+            "5) $MENU_SET_COMPAT_LAN_IF: $(value_or_empty "$compat_lan_if")" \
+            "6) $MENU_SET_COMPAT_TUN_IF: $(value_or_empty "$compat_tun_if")" \
+            "7) $MENU_SHOW_COMPAT_STATUS" \
+            "8) $MENU_APPLY_COMPAT_NOW" \
+            "0) $COMMON_BACK"
+        read -r -p "$COMMON_INPUT> " num
+        case "$num" in
+            0|'') return ;;
+            1) toggle_simple_value compat_enable ;;
+            2) toggle_simple_value compat_shellcrash ;;
+            3) toggle_simple_value compat_masquerade ;;
+            4) toggle_simple_value compat_fix_metric ;;
+            5) edit_simple_value compat_lan_if "$MENU_INPUT_COMPAT_LAN_IF" ;;
+            6) edit_simple_value compat_tun_if "$MENU_INPUT_COMPAT_TUN_IF" ;;
+            7) run_cli_shell_command '"'$APPDIR'/start.sh" compat-status' ;;
+            8) "$APPDIR/start.sh" compat-apply >/dev/null 2>&1; run_cli_shell_command '"'$APPDIR'/start.sh" compat-status' ;;
+            *) errornum ;;
+        esac
+    done
+}
+
 advanced_menu() {
     while true; do
         comp_box "$MENU_ADVANCED_TITLE" \
@@ -390,6 +431,7 @@ advanced_menu() {
             "4) $MENU_ADVANCED_SECURITY_TITLE" \
             "5) $MENU_ADVANCED_RUNTIME_TITLE" \
             "6) $MENU_ADVANCED_ACL_TITLE" \
+            "7) $MENU_ADVANCED_COMPAT_TITLE" \
             "0) $COMMON_BACK"
         read -r -p "$COMMON_INPUT> " num
         case "$num" in
@@ -400,6 +442,7 @@ advanced_menu() {
             4) advanced_security_menu ;;
             5) advanced_runtime_menu ;;
             6) advanced_acl_menu ;;
+            7) advanced_compat_menu ;;
             *) errornum ;;
         esac
     done
