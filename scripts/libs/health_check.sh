@@ -38,17 +38,42 @@ port_is_listening() {
     return 1
 }
 
+cli_node_ready() {
+    [ -x "$BINDIR/easytier-cli" ] || return 1
+
+    mkdir -p "$TMPDIR" 2>/dev/null
+    tmp_out="$TMPDIR/cli_ready.$$"
+
+    "$BINDIR/easytier-cli" -p "$rpc_portal" -o json node > "$tmp_out" 2>&1 &
+    pid=$!
+    i=1
+
+    while kill -0 "$pid" 2>/dev/null && [ "$i" -le 3 ]; do
+        sleep 1
+        i=$((i + 1))
+    done
+
+    if kill -0 "$pid" 2>/dev/null; then
+        kill -TERM "$pid" 2>/dev/null
+        wait "$pid" 2>/dev/null
+        rm -f "$tmp_out"
+        return 1
+    fi
+
+    wait "$pid"
+    rc=$?
+    rm -f "$tmp_out"
+    return "$rc"
+}
+
 service_is_ready() {
     pidof easytier-core >/dev/null 2>&1 || return 1
 
-    if [ "$et_mode" = remote ]; then
-        return 0
-    fi
-
     port=$(get_rpc_port 2>/dev/null)
-    if [ -n "$port" ]; then
-        port_is_listening "$port" || return 1
-    fi
+    [ -n "$port" ] || return 1
+    port_is_listening "$port" || return 1
+
+    cli_node_ready || return 1
 
     return 0
 }
