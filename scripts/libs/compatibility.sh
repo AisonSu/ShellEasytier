@@ -116,6 +116,23 @@ compat_drop_chain() {
     iptables -t "$table" -X "$chain" 2>/dev/null || true
 }
 
+compat_delete_chain_references() {
+    table="$1"
+    chain="$2"
+
+    iptables -t "$table" -S 2>/dev/null | while IFS= read -r rule; do
+        case "$rule" in
+            *"-j $chain"*)
+                set -- $rule
+                [ "$1" = "-A" ] || continue
+                from_chain="$2"
+                shift 2
+                compat_delete_rule "$table" "$from_chain" "$@"
+                ;;
+        esac
+    done
+}
+
 compat_fix_route_metrics() {
     tun_if="$1"
     compat_bool_on "$compat_fix_metric" || return 0
@@ -189,16 +206,10 @@ compat_apply_shellcrash_bypass() {
 }
 
 compat_remove_rules() {
-    [ -n "$compat_lan_if" ] || compat_lan_if=$(compat_detect_lan_if)
-    [ -n "$compat_tun_if" ] || compat_tun_if=$(compat_detect_tun_if)
+    compat_delete_chain_references filter "$COMPAT_FILTER_CHAIN"
+    compat_delete_chain_references nat "$COMPAT_NAT_POST_CHAIN"
+    compat_delete_chain_references nat "$COMPAT_NAT_BYPASS_CHAIN"
 
-    [ -n "$compat_lan_if" ] && [ -n "$compat_tun_if" ] && {
-        compat_delete_rule filter FORWARD -i "$compat_lan_if" -o "$compat_tun_if" -j "$COMPAT_FILTER_CHAIN"
-        compat_delete_rule filter FORWARD -i "$compat_tun_if" -o "$compat_lan_if" -j "$COMPAT_FILTER_CHAIN"
-        compat_delete_rule nat POSTROUTING -o "$compat_tun_if" -j "$COMPAT_NAT_POST_CHAIN"
-    }
-
-    compat_delete_rule nat PREROUTING -j "$COMPAT_NAT_BYPASS_CHAIN"
     compat_drop_chain filter "$COMPAT_FILTER_CHAIN"
     compat_drop_chain nat "$COMPAT_NAT_POST_CHAIN"
     compat_drop_chain nat "$COMPAT_NAT_BYPASS_CHAIN"
