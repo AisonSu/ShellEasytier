@@ -67,8 +67,8 @@ cli_node_ready() {
     return "$rc"
 }
 
-service_is_ready() {
-    pidof easytier-core >/dev/null 2>&1 || return 1
+service_cli_ready() {
+    core_process_ready || return 1
 
     port=$(get_rpc_port 2>/dev/null)
     [ -n "$port" ] || return 1
@@ -77,6 +77,14 @@ service_is_ready() {
     cli_node_ready || return 1
 
     return 0
+}
+
+core_process_ready() {
+    pidof easytier-core >/dev/null 2>&1
+}
+
+service_is_ready() {
+    core_process_ready
 }
 
 web_is_ready() {

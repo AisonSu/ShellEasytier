@@ -171,6 +171,18 @@ case "$1" in
         service_is_ready
         exit $?
         ;;
+    cli-status)
+        if service_cli_ready; then
+            logger 'ShellEasytier 管理接口可用。' 32
+            exit 0
+        fi
+        logger 'ShellEasytier 管理接口未就绪。' 33
+        exit 1
+        ;;
+    cli-status-code)
+        service_cli_ready
+        exit $?
+        ;;
     compat-apply)
         load_config
         compat_apply_rules

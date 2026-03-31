@@ -28,7 +28,7 @@ web_menu_enabled() {
 }
 
 core_tools_enabled() {
-    "$APPDIR/start.sh" status-code >/dev/null 2>&1
+    "$APPDIR/start.sh" cli-status-code >/dev/null 2>&1
 }
 
 snapshot_core_runtime_config() {
