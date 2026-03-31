@@ -96,7 +96,8 @@ capabilities implemented:
 - shell-safe command persistence in `command.env`
 - manual interactive start separated from daemon-run path
 - runtime logs written to `/tmp/ShellEasytier/`
-- lightweight health/status checks
+- shared readiness checks now require `pid + rpc_portal + easytier-cli node`
+- web readiness now checks both process and local web API port listening
 - start failure fuse writes `.start_error` and disables future autostart
 - procd stop path no longer recurses through `start.sh stop`
 
@@ -115,6 +116,14 @@ capabilities implemented:
 - `scripts/uninstall.sh` full cleanup path
 - uninstall cleanup removes profile aliases, startup hooks, system services, and
   snapshot recovery artifacts
+
+### Release Assets
+
+- generated `dist/install.sh` / `dist/install_en.sh`
+- generated `dist/uninstall.sh` / `dist/uninstall_en.sh`
+- generated `dist/ShellEasytier.tar.gz`
+- generated `.sha256` files for release assets
+- release workflow validates runtime asset matrix before publish
 
 ### Compatibility
 
@@ -142,6 +151,8 @@ capabilities implemented:
 ### WSL-verified
 
 - installer runs
+- localized install/uninstall assets generate into `dist/`
+- release tarball builds into `dist/`
 - local/remote mode switching works
 - runtime binaries download correctly
 - remote mode can connect to config-server

@@ -36,6 +36,7 @@ desktop wrapper.
 - `scripts/libs/get_config.sh`: defaults + effective config loading
 - `scripts/libs/set_profile.sh`: selected alias persistence + profile recovery
 - `scripts/libs/build_command.sh`: local/remote command generation
+- `scripts/libs/health_check.sh`: shared core/web readiness probe
 - `scripts/libs/prepare_runtime.sh`: runtime binary download and placement
 - `scripts/libs/pkg_profile.sh`: architecture + storage layout decision
 - `scripts/libs/compatibility.sh`: firewall / ShellCrash compatibility layer
@@ -74,6 +75,8 @@ When debugging a live router install, the minimum runtime files to inspect are:
 - Default install source points to GitHub Releases `latest/download`.
 - Runtime binary download prefers flat release assets and may fall back to
   legacy `pkg/<arch>/...` paths.
+- Release assets are generated into `dist/`, including localized install and
+  uninstall entry scripts plus `.sha256` files.
 - `local` mode and `remote` mode must remain different products in one UI, not
   one blended mode.
 - The router compatibility layer is enabled by default and should remain low-
@@ -142,7 +145,7 @@ When something breaks, debug in this order:
 1. Install / upgrade path
 2. Runtime binary preparation
 3. Command generation and quoting
-4. Core start / status path
+4. Core / Web status probe path
 5. Snapshot boot recovery chain (`firewall include`, `/data/auto_start.sh`,
    profile restore, service restore)
 6. Web start / status path
@@ -302,6 +305,7 @@ Use this as a quick dependency checklist:
   - check `compat-status`
   - check menu text and restart flow
   - check persistence hook behavior
+  - check boot hook gating now uses service readiness instead of raw pid only
 - If you change `scripts/libs/set_profile.sh`:
   - check saved `my_alias`
   - check reboot-time alias restoration
@@ -319,6 +323,7 @@ Use this as a quick dependency checklist:
   - check failure fuse behavior
   - check no stop recursion is introduced
   - check cold reboot restores alias and autostart on snapshot targets
+  - check status gating uses shared readiness probes where appropriate
 
 ## Runtime Binary Placement Rules
 
@@ -406,6 +411,8 @@ Release workflow expectations:
 
 - On tag push, workflow rewrites `version` in workflow workspace
 - Builds `ShellEasytier.tar.gz`
+- Generates localized `dist/install*.sh` and `dist/uninstall*.sh`
+- Publishes `.sha256` files for generated release assets
 - Publishes flat runtime assets per architecture
 - Overwrites assets on retag when needed
 
