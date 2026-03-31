@@ -24,7 +24,7 @@ load_lang menu
 
 web_menu_enabled() {
     . "$APPDIR/scripts/libs/pkg_profile.sh"
-    can_offer_local_web_menu
+    can_offer_local_web_menu || can_enable_local_web_menu
 }
 
 core_service_running() {
@@ -527,6 +527,31 @@ service_menu() {
 
 web_menu() {
     . "$APPDIR/scripts/libs/pkg_profile.sh"
+    can_offer_local_web_menu || {
+        can_enable_local_web_menu || {
+            msg_alert "\033[33m$MENU_WEB_UNAVAILABLE\033[0m"
+            return
+        }
+
+        while true; do
+            comp_box "$MENU_WEB_TITLE" \
+                "$MENU_WEB_INSTALL_HINT" \
+                "1) $MENU_WEB_INSTALL" \
+                "0) $COMMON_BACK"
+            read -r -p "$COMMON_INPUT> " num
+            case "$num" in
+                0|'') return ;;
+                1)
+                    setconfig install_web ON
+                    load_config
+                    msg_alert "\033[32m$MENU_WEB_INSTALL_DONE\033[0m"
+                    ;;
+                *) errornum ;;
+            esac
+            can_offer_local_web_menu && break
+        done
+    }
+
     can_offer_local_web_menu || {
         msg_alert "\033[33m$MENU_WEB_UNAVAILABLE\033[0m"
         return

@@ -133,3 +133,18 @@ can_offer_local_web_menu() {
 
     [ "$ET_HAS_WEB_EMBED" = 1 ]
 }
+
+can_enable_local_web_menu() {
+    [ "$install_web" = ON ] && return 1
+
+    detect_pkg_support || return 1
+    [ "$ET_HAS_WEB_EMBED" = 1 ] || return 1
+
+    old_install_web="$install_web"
+    install_web=ON
+    choose_runtime_layout >/dev/null 2>&1
+    rc=$?
+    install_web="$old_install_web"
+    choose_runtime_layout >/dev/null 2>&1 || true
+    return "$rc"
+}

@@ -113,6 +113,10 @@ Downloaded release archives and runtime binaries still need content validation.
 
 Generated remote install and uninstall scripts are written to `dist/`.
 
+Fresh install asks whether to enable the local Web console.
+Upgrade install keeps the existing `install_web` choice and does not ask again.
+If you skip it during installation, you can enable it later from the Web menu.
+
 ## Remote Mode Notes
 
 In `remote` mode, the core process may run normally even when the local RPC

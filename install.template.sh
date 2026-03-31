@@ -378,9 +378,13 @@ check_tmp_space() {
 }
 
 choose_web_install() {
-    install_web=OFF
     need_kb=$REQ_SCRIPT_KB
     if arch_has_web_embed; then
+        if [ "$upgrade_install" = 1 ] && [ -n "$install_web" ]; then
+            return 0
+        fi
+
+        install_web=OFF
         cecho "$MSG_WEB"
         read -r -p '(1/0) > ' res
         if [ "$res" = 1 ]; then

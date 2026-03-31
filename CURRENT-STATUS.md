@@ -104,6 +104,8 @@ capabilities implemented:
 - menu CLI queries no longer shell-wrap `easytier-cli` through `sh -c`
 - remote mode no longer forces local tools visibility when RPC management is unavailable
 - remote mode now treats core liveness and local RPC readiness as separate states
+- upgrade install preserves existing Web console choice
+- local Web console can now be enabled later from the Web menu
 
 ### Boot Recovery
 
