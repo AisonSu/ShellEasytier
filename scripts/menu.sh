@@ -59,6 +59,11 @@ prompt_restart_core_if_changed() {
     [ "$before_snapshot" = "$after_snapshot" ] && return 0
     "$APPDIR/start.sh" status-code >/dev/null 2>&1 || return 0
 
+    if [ "$et_mode" = remote ] && [ -z "$config_server" ]; then
+        msg_alert "\033[33m$MENU_RESTART_CORE_BLOCKED\033[0m"
+        return 0
+    fi
+
     line_break
     separator_line '='
     content_line "$MENU_RESTART_CORE_PROMPT"

@@ -15,6 +15,17 @@ export APPDIR
 . "$APPDIR/scripts/libs/compatibility.sh"
 . "$APPDIR/scripts/libs/logger.sh"
 
+core_start_prereqs_ready() {
+    load_config
+
+    if [ "$et_mode" = remote ]; then
+        config_server_value=$(resolve_config_server_value)
+        [ -n "$config_server_value" ] || return 1
+    fi
+
+    return 0
+}
+
 load_command_env() {
     [ -f "$APPDIR/configs/command.env" ] || return 1
     . "$APPDIR/configs/command.env"
@@ -116,6 +127,10 @@ run_web_command() {
 
 case "$1" in
     start)
+        core_start_prereqs_ready || {
+            logger '远程模式需要先配置 config-server。' 31
+            exit 1
+        }
         pidof easytier-core >/dev/null 2>&1 && "$0" stop
         rm -f "$APPDIR/.start_error"
         start_legacy
@@ -136,6 +151,10 @@ case "$1" in
         killall easytier-core 2>/dev/null
         ;;
     restart)
+        core_start_prereqs_ready || {
+            logger '远程模式需要先配置 config-server。' 31
+            exit 1
+        }
         "$0" stop
         "$0" start
         ;;
