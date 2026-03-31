@@ -29,11 +29,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          bash verify_release_assets.sh
+          bash build_installers.sh
           bash pack_release.sh
-          test -f ShellEasytier.tar.gz
+          test -f dist/ShellEasytier.tar.gz
 
       - name: Upload CI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ShellEasytier-tarball
-          path: ShellEasytier.tar.gz
+          name: ShellEasytier-dist
+          path: dist/*
