@@ -203,6 +203,18 @@ case "$1" in
         fi
         killall easytier-web-embed 2>/dev/null
         ;;
+    web-status)
+        if web_is_ready; then
+            logger 'ShellEasytier Web 控制台正在运行。' 32
+            exit 0
+        fi
+        logger 'ShellEasytier Web 控制台未运行。' 31
+        exit 1
+        ;;
+    web-status-code)
+        web_is_ready
+        exit $?
+        ;;
     init)
         . "$APPDIR/scripts/starts/general_init.sh"
         ;;

@@ -72,7 +72,7 @@ sync_core_autostart() {
 sync_web_autostart() {
     if [ "$install_web" = ON ] && [ "$web_autostart" = ON ] && [ ! -f "$APPDIR/.dis_startup_web" ] && [ ! -f "$APPDIR/.start_error" ]; then
         /etc/init.d/shelleasytier-web enable >/dev/null 2>&1
-        pidof easytier-web-embed >/dev/null 2>&1 || /etc/init.d/shelleasytier-web start >/dev/null 2>&1
+        "$APPDIR/start.sh" web-status-code >/dev/null 2>&1 || /etc/init.d/shelleasytier-web start >/dev/null 2>&1
     else
         /etc/init.d/shelleasytier-web disable >/dev/null 2>&1
         /etc/init.d/shelleasytier-web stop >/dev/null 2>&1

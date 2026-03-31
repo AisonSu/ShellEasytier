@@ -79,5 +79,10 @@ service_is_ready() {
 }
 
 web_is_ready() {
-    pidof easytier-web-embed >/dev/null 2>&1
+    pidof easytier-web-embed >/dev/null 2>&1 || return 1
+
+    [ -n "$web_console_api_port" ] || return 0
+    [ "$web_console_api_port" = 0 ] && return 0
+
+    port_is_listening "$web_console_api_port"
 }

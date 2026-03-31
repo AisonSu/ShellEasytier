@@ -72,7 +72,7 @@ prompt_restart_web_if_changed() {
     before_snapshot="$1"
     after_snapshot=$(snapshot_web_runtime_config)
     [ "$before_snapshot" = "$after_snapshot" ] && return 0
-    pidof easytier-web-embed >/dev/null 2>&1 || return 0
+    "$APPDIR/start.sh" web-status-code >/dev/null 2>&1 || return 0
 
     line_break
     separator_line '='
@@ -531,7 +531,7 @@ web_menu() {
     while true; do
         load_config
         running_status
-        if pidof easytier-web-embed >/dev/null 2>&1; then
+        if "$APPDIR/start.sh" web-status-code >/dev/null 2>&1; then
             web_action_label="$MENU_WEB_STOP"
             web_action=stop
         else
