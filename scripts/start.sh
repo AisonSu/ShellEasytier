@@ -11,6 +11,7 @@ export APPDIR
 . "$APPDIR/scripts/libs/set_profile.sh"
 . "$APPDIR/scripts/libs/check_cmd.sh"
 . "$APPDIR/scripts/libs/check_autostart.sh"
+. "$APPDIR/scripts/libs/build_command.sh"
 . "$APPDIR/scripts/libs/health_check.sh"
 . "$APPDIR/scripts/libs/compatibility.sh"
 . "$APPDIR/scripts/libs/logger.sh"
