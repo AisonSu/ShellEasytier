@@ -1,5 +1,6 @@
 ShellEasytier.tar.gz
 dist/
+SELF-DEV-AGENT.md
 configs/ShellEasytier.cfg
 configs/command.env
 configs/*.list

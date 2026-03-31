@@ -42,8 +42,10 @@ CFG_PATH="$APPDIR/configs/ShellEasytier.cfg"
 [ -f "$CFG_PATH" ] || cp -f "$APPDIR/configs/ShellEasytier.cfg.example" "$CFG_PATH"
 load_config
 
-[ -z "$my_alias" ] && my_alias=et
+[ -z "$my_alias" ] && my_alias=se
 [ -z "$TMPDIR" ] && TMPDIR=/tmp/ShellEasytier
+
+clear_command_shims
 
 for file in peers.list listeners.list mapped_listeners.list proxy_networks.list manual_routes.list exit_nodes.list port_forward.list stun_servers.list stun_servers_v6.list external_nodes.list relay_network_whitelist.list; do
     touch "$APPDIR/configs/$file"
@@ -153,6 +155,30 @@ fi
     chmod 755 "$APPDIR/scripts/starts/general_init.sh" 2>/dev/null
     setconfig initdir "$initdir"
 }
+
+if [ "$systype" = "mi_snapshot" ] || [ "$systype" = "ng_snapshot" ]; then
+    if [ "$systype" = "mi_snapshot" ]; then
+        snapshot_init_path=/data/shelleasytier_init.sh
+        cp -f "$APPDIR/scripts/starts/snapshot_init.sh" "$snapshot_init_path"
+
+        [ -f /data/auto_start.sh ] || printf '# ShellEasytier custom startup hooks\n' > /data/auto_start.sh
+        sed -i '/ShellEasytier初始化脚本/d' /data/auto_start.sh 2>/dev/null
+        printf '/bin/sh "%s" init >/dev/null 2>&1 & #ShellEasytier初始化脚本\n' "$snapshot_init_path" >> /data/auto_start.sh
+        chmod 755 /data/auto_start.sh 2>/dev/null
+    else
+        snapshot_init_path="$APPDIR/scripts/starts/snapshot_init.sh"
+    fi
+
+    sed -i "s#^APPDIR=.*#APPDIR=$APPDIR#" "$snapshot_init_path"
+    chmod 755 "$snapshot_init_path" 2>/dev/null
+
+    uci delete firewall.ShellEasytier 2>/dev/null
+    uci set firewall.ShellEasytier=include
+    uci set firewall.ShellEasytier.type='script'
+    uci set firewall.ShellEasytier.path="$snapshot_init_path"
+    uci set firewall.ShellEasytier.enabled='1'
+    uci commit firewall
+fi
 
 [ "$core_autostart" = ON ] && enable_core_autostart || disable_core_autostart
 [ "$web_autostart" = ON ] && enable_web_autostart || disable_web_autostart

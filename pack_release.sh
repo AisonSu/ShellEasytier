@@ -17,6 +17,10 @@ tar -czf "$TMP_FILE" \
     --exclude="$REPO_NAME/bin" \
     --exclude="$REPO_NAME/.git" \
     --exclude="$REPO_NAME/dist" \
+    --exclude="$REPO_NAME/AGENTS.md" \
+    --exclude="$REPO_NAME/CURRENT-STATUS.md" \
+    --exclude="$REPO_NAME/SELF.md" \
+    --exclude="$REPO_NAME/SELF-DEV-AGENT.md" \
     -C "$(dirname "$REPO_ROOT")" \
     "$REPO_NAME"
 

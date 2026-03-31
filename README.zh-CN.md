@@ -52,6 +52,7 @@ ShellEasytier/
 ├── menu.sh
 ├── start.sh
 ├── init.sh
+├── uninstall.sh
 ├── version
 ├── README.md
 ├── README.zh-CN.md
@@ -67,6 +68,7 @@ ShellEasytier/
 │   └── ShellEasytier.cfg.example
 ├── scripts/
 │   ├── init.sh
+│   ├── uninstall.sh
 │   ├── start.sh
 │   ├── menu.sh
 │   ├── libs/
@@ -112,6 +114,22 @@ sh -c "$(curl -kfsSl "$url/install_en.sh")" && \
 - `persistent`：始终保存在安装目录下
 - `tmp`：始终保存在 `/tmp`
 - `custom`：使用用户指定的基础路径
+
+## 卸载
+
+如需完整移除 ShellEasyTier 及其开机接管项：
+
+```sh
+sh "$APPDIR/uninstall.sh"
+```
+
+卸载脚本会移除：
+
+- 开机服务和启动钩子
+- `et` 等 profile 别名
+- 防火墙恢复钩子和快照固件恢复钩子
+- 运行时缓存目录
+- 安装目录本身
 
 ## 运行模式
 

@@ -52,6 +52,7 @@ ShellEasytier/
 ├── menu.sh
 ├── start.sh
 ├── init.sh
+├── uninstall.sh
 ├── version
 ├── README.md
 ├── README.zh-CN.md
@@ -67,6 +68,7 @@ ShellEasytier/
 │   └── ShellEasytier.cfg.example
 ├── scripts/
 │   ├── init.sh
+│   ├── uninstall.sh
 │   ├── start.sh
 │   ├── menu.sh
 │   ├── libs/
@@ -111,6 +113,22 @@ Available storage modes:
 - `persistent`: always store binaries under the install directory
 - `tmp`: always store binaries under `/tmp`
 - `custom`: store binaries under a custom base path chosen by the user
+
+## Uninstall
+
+To fully remove ShellEasyTier and its startup hooks:
+
+```sh
+sh "$APPDIR/uninstall.sh"
+```
+
+This removes:
+
+- startup services and boot hooks
+- profile aliases such as `et`
+- firewall recovery hooks and snapshot recovery hooks
+- runtime cache directories
+- the install directory itself
 
 ## Runtime Model
 

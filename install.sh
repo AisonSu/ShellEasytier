@@ -31,6 +31,7 @@ if [ "$language" = en ]; then
     MSG_EXTRACT='Extracting selected files...'
     MSG_DONE='ShellEasytier installed successfully!'
     MSG_ALIAS_DONE='Use this command to manage ShellEasytier:'
+    MSG_ALIAS_HINT='If the current shell still does not recognize the alias, run . /etc/profile or open a new shell.'
     MSG_USER='Please use root when possible. Continue anyway? (1/0) > '
     MSG_PATH='Enter custom path > '
 else
@@ -52,6 +53,7 @@ else
     MSG_EXTRACT='开始解压所选文件...'
     MSG_DONE='ShellEasytier 已安装成功！'
     MSG_ALIAS_DONE='输入以下命令即可管理 ShellEasytier：'
+    MSG_ALIAS_HINT='如果当前终端还没有识别到别名，请执行 . /etc/profile 或重新打开终端。'
     MSG_USER='请尽量使用 root 用户安装，仍要继续？(1/0) > '
     MSG_PATH='请输入自定义路径 > '
 fi
@@ -191,26 +193,38 @@ arch_has_web_embed() {
     esac
 }
 
+alias_name_exists() {
+    alias_name="$1"
+
+    PATH='/usr/sbin:/usr/bin:/sbin:/bin:/opt/sbin:/opt/bin:/data/usr/bin' command -v "$alias_name" >/dev/null 2>&1 && return 0
+
+    for path_dir in /usr/sbin /usr/bin /sbin /bin /opt/sbin /opt/bin /data/usr/bin; do
+        [ -x "$path_dir/$alias_name" ] && return 0
+    done
+
+    return 1
+}
+
 set_alias() {
     while true; do
         echo '-----------------------------------------------'
         cecho "$MSG_ALIAS"
         echo '-----------------------------------------------'
-        cecho ' 1 【et】'
+        cecho ' 1 【se】'
         cecho ' 2 【easytier】'
-        cecho ' 3 【se】'
+        cecho ' 3 【et】(legacy)'
         cecho ' 0 Exit / 退出安装'
         echo '-----------------------------------------------'
         read -r -p "$MSG_INPUT > " res
         case "$res" in
             0) echo "$MSG_CANCEL"; exit 1 ;;
-            1) my_alias=et ;;
+            1) my_alias=se ;;
             2) my_alias=easytier ;;
-            3) my_alias=se ;;
+            3) my_alias=et ;;
             *) my_alias=$res ;;
         esac
         [ -n "$my_alias" ] || continue
-        if command -v "$my_alias" >/dev/null 2>&1; then
+        if alias_name_exists "$my_alias"; then
             cecho "\033[33mAlias already exists, choose another one. / 别名已存在，请更换。\033[0m"
             sleep 1
             continue
@@ -418,7 +432,8 @@ install_main() {
 
     echo '-----------------------------------------------'
     echo "$MSG_DONE"
-    cecho "$MSG_ALIAS_DONE \033[30;47m ${my_alias:-et} \033[0m"
+    cecho "$MSG_ALIAS_DONE \033[30;47m ${my_alias:-se} \033[0m"
+    cecho "$MSG_ALIAS_HINT"
     echo '-----------------------------------------------'
 }
 

@@ -122,10 +122,10 @@ compat_fix_route_metrics() {
 
     compat_collect_tun_routes "$tun_if" | while IFS= read -r cidr; do
         [ -n "$cidr" ] || continue
-        while ip route del "$cidr" dev "$tun_if" proto static 2>/dev/null; do :; done
+        good_route=$(ip route show "$cidr" dev "$tun_if" 2>/dev/null | awk '!/metric 65535/ { print; exit }')
         ip route del "$cidr" dev "$tun_if" metric 65535 2>/dev/null || true
         ip route del "$cidr" dev "$tun_if" proto static metric 65535 2>/dev/null || true
-        ip route replace "$cidr" dev "$tun_if" metric 10 2>/dev/null || true
+        [ -n "$good_route" ] || ip route replace "$cidr" dev "$tun_if" metric 10 2>/dev/null || true
     done
 }
 
@@ -180,7 +180,7 @@ compat_apply_shellcrash_bypass() {
         [ -n "$lan_cidr" ] || continue
         compat_collect_tun_routes "$2" | while IFS= read -r tun_cidr; do
             [ -n "$tun_cidr" ] || continue
-            iptables -t nat -A "$COMPAT_NAT_BYPASS_CHAIN" -s "$lan_cidr" -d "$tun_cidr" -j RETURN
+            iptables -t nat -A "$COMPAT_NAT_BYPASS_CHAIN" -s "$lan_cidr" -d "$tun_cidr" -j ACCEPT
         done
     done
 
@@ -213,9 +213,14 @@ compat_install_firewall_hook() {
     cat > "$task_hook" <<EOF
 #!/bin/sh
 APPDIR="$APPDIR"
-pidof easytier-core >/dev/null 2>&1 || exit 0
-sleep 3
-"$APPDIR/start.sh" compat-apply >/dev/null 2>&1
+pidof easytier-core >/dev/null 2>&1 || {
+    return 0 2>/dev/null || exit 0
+}
+(
+    sleep 3
+    "$APPDIR/start.sh" compat-apply >/dev/null 2>&1
+) &
+return 0 2>/dev/null || exit 0
 EOF
     chmod 755 "$task_hook" 2>/dev/null || true
 
@@ -228,7 +233,7 @@ EOF
     fwuser=/etc/firewall.user
     touch "$fwuser" 2>/dev/null || return 0
     sed -i '/ShellEasyTier compatibility hook/d' "$fwuser" 2>/dev/null
-    printf '. "%s" %s\n' "$task_hook" "$COMPAT_FWUSER_MARK" >> "$fwuser"
+    printf '/bin/sh "%s" >/dev/null 2>&1 & %s\n' "$task_hook" "$COMPAT_FWUSER_MARK" >> "$fwuser"
 }
 
 compat_remove_firewall_hook() {

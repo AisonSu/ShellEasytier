@@ -8,10 +8,39 @@ export APPDIR
 
 . "$APPDIR/scripts/libs/get_config.sh"
 . "$APPDIR/scripts/libs/set_config.sh"
+. "$APPDIR/scripts/libs/set_profile.sh"
 . "$APPDIR/scripts/libs/check_cmd.sh"
+. "$APPDIR/scripts/libs/check_autostart.sh"
 . "$APPDIR/scripts/libs/health_check.sh"
 . "$APPDIR/scripts/libs/compatibility.sh"
 . "$APPDIR/scripts/libs/logger.sh"
+
+cleanup_profile_files() {
+    for profile in /etc/profile /opt/etc/profile /jffs/configs/profile.add; do
+        clear_profile "$profile"
+    done
+}
+
+cleanup_startup_hooks() {
+    disable_core_autostart
+    disable_web_autostart
+    cleanup_profile_files
+    clear_command_shims
+
+    for hook_file in "$initdir" /etc/storage/started_script.sh /jffs/.asusrouter /jffs/scripts/services-start /data/auto_start.sh; do
+        [ -n "$hook_file" ] && sed -i '/ShellEasytier初始化脚本/d' "$hook_file" 2>/dev/null
+    done
+
+    rm -f /etc/init.d/shelleasytier /etc/init.d/shelleasytier-web
+    rm -f /etc/systemd/system/shelleasytier.service /etc/systemd/system/shelleasytier-web.service
+    rm -f /usr/lib/systemd/system/shelleasytier.service /usr/lib/systemd/system/shelleasytier-web.service
+    rm -f /data/shelleasytier_init.sh
+
+    uci delete firewall.ShellEasytier 2>/dev/null
+    uci commit firewall 2>/dev/null
+
+    ckcmd systemctl && systemctl daemon-reload >/dev/null 2>&1
+}
 
 bfstart() {
     "$APPDIR/scripts/starts/bfstart.sh"
@@ -102,6 +131,12 @@ case "$1" in
         compat_remove_firewall_hook
         exit 0
         ;;
+    uninstall-cleanup)
+        cleanup_startup_hooks
+        compat_remove_rules >/dev/null 2>&1
+        compat_remove_firewall_hook >/dev/null 2>&1
+        exit 0
+        ;;
     compat-status)
         load_config
         compat_status
@@ -109,6 +144,7 @@ case "$1" in
         ;;
     daemon-run)
         bfstart || exit 1
+        "$APPDIR/scripts/starts/afstart.sh" >/dev/null 2>&1 &
         . "$APPDIR/configs/command.env"
         eval "exec $COMMAND"
         ;;

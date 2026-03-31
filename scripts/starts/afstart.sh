@@ -11,6 +11,10 @@ export APPDIR
 . "$APPDIR/scripts/libs/start_wait.sh"
 . "$APPDIR/scripts/libs/compatibility.sh"
 
+LOCKDIR="$TMPDIR/afstart.lock"
+mkdir "$LOCKDIR" 2>/dev/null || exit 0
+trap 'rmdir "$LOCKDIR" 2>/dev/null' EXIT INT TERM
+
 if start_wait; then
     if ! compat_post_start; then
         logger '防火墙/兼容规则应用失败，请检查兼容配置。' 33
