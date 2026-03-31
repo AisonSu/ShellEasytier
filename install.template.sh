@@ -25,6 +25,8 @@ if [ "$language" = en ]; then
     MSG_VERIFY_FAIL='Downloaded archive is invalid or corrupted.'
     MSG_VERIFY_SKIP='Checksum tool is unavailable locally, falling back to archive integrity check.'
     MSG_CHECKSUM_FAIL='Checksum verification failed!'
+    MSG_CONFIG_BACKUP_FAIL='Failed to back up existing configuration before upgrade.'
+    MSG_CONFIG_RESTORE_FAIL='Failed to restore existing configuration after upgrade.'
     MSG_TLS_NOTE='TLS verification may fall back to compatibility mode on legacy router environments.'
     MSG_DIR_WARN='This package only installs ShellEasytier scripts. Runtime binaries will be downloaded on first start.'
     MSG_DIR_BAD='No write permission or not enough free space, please choose again!'
@@ -51,6 +53,8 @@ else
     MSG_VERIFY_FAIL='下载的安装包无效或已损坏。'
     MSG_VERIFY_SKIP='本机缺少校验工具，将回退到压缩包完整性校验。'
     MSG_CHECKSUM_FAIL='校验和验证失败！'
+    MSG_CONFIG_BACKUP_FAIL='升级前备份旧配置失败。'
+    MSG_CONFIG_RESTORE_FAIL='升级后恢复旧配置失败。'
     MSG_TLS_NOTE='在老旧路由环境下，TLS 校验可能会退化到兼容模式。'
     MSG_DIR_WARN='当前安装包只安装 ShellEasytier 脚本主体，运行时二进制会在首次启动时下载。'
     MSG_DIR_BAD='目录不可写或剩余空间不足，请重新选择！'
@@ -443,6 +447,27 @@ extract_project() {
     rm -f "$archive_path" "$checksum_path"
 }
 
+backup_existing_configs() {
+    backup_dir=''
+    [ -d "$APPDIR/configs" ] || return 0
+
+    backup_dir=/tmp/ShellEasytier-install-backup.$$
+    rm -rf "$backup_dir"
+    mkdir -p "$backup_dir" || return 1
+
+    cp -a "$APPDIR/configs/." "$backup_dir/" 2>/dev/null || return 1
+}
+
+restore_existing_configs() {
+    [ -n "$backup_dir" ] || return 0
+    [ -d "$backup_dir" ] || return 0
+
+    mkdir -p "$APPDIR/configs"
+    cp -a "$backup_dir/." "$APPDIR/configs/" 2>/dev/null || return 1
+    rm -rf "$backup_dir"
+    backup_dir=''
+}
+
 install_main() {
     check_systype
     check_user
@@ -492,7 +517,16 @@ install_main() {
         set_alias
     fi
 
+    backup_existing_configs || {
+        cecho "\033[31m$MSG_CONFIG_BACKUP_FAIL\033[0m"
+        exit 1
+    }
+
     extract_project
+    restore_existing_configs || {
+        cecho "\033[31m$MSG_CONFIG_RESTORE_FAIL\033[0m"
+        exit 1
+    }
 
     export APPDIR url language my_alias install_web binary_storage_mode binary_storage_path
     . "$APPDIR/init.sh" >/dev/null 2>&1
