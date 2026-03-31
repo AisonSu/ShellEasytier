@@ -106,6 +106,14 @@ sh -c "$(curl -kfsSl "$url/install_en.sh")" && \
 - 安装时覆盖 `url`
 - 或安装后在菜单里修改 `update_url`
 
+ShellEasyTier 会优先尝试正常的 HTTPS 校验。
+
+在部分老旧路由器环境中，如果本机 `curl` / `wget` 的证书能力不完整，
+下载链会退化到兼容模式。
+
+这种退化是为了兼容设备，不等于额外建立了更强的信任链，因此仍需要配合
+下载后内容验真。
+
 安装阶段还会询问运行时二进制的存放位置。
 
 可选模式：
@@ -237,6 +245,9 @@ OpenWrt / 路由器环境，尤其是与 ShellCrash 共存的场景。
    - `update_url/easytier-cli-<arch>`
    - 如果启用 Web，则再下载 `update_url/easytier-web-embed-<arch>`
 3. 为兼容旧式发布目录，也支持回退到 `pkg/<arch>/...` 路径
+
+当本机下载工具无法在弱设备上完成严格 TLS 校验时，ShellEasyTier 可能回退到
+兼容模式下载，然后再做最基本的下载后验真。
 
 这种方式可以保持安装包很小，同时保留多架构支持能力。
 

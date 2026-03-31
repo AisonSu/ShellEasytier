@@ -8,8 +8,10 @@ download_runtime_file() {
     output="$2"
 
     if command -v curl >/dev/null 2>&1; then
+        curl -fsSL "$url" -o "$output" && return 0
         curl -kfsSL "$url" -o "$output"
     elif command -v wget >/dev/null 2>&1; then
+        wget -qO "$output" "$url" && return 0
         wget --no-check-certificate -qO "$output" "$url"
     else
         return 1

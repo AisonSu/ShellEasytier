@@ -20,6 +20,8 @@ if [ "$language" = en ]; then
     MSG_TMP_FAIL='Not enough free space in /tmp to download release archive.'
     MSG_DOWN='Downloading installation package...'
     MSG_DOWN_FAIL='Failed to download installation package!'
+    MSG_VERIFY_FAIL='Downloaded archive is invalid or corrupted.'
+    MSG_TLS_NOTE='TLS verification may fall back to compatibility mode on legacy router environments.'
     MSG_DIR_WARN='This package only installs ShellEasytier scripts. Runtime binaries will be downloaded on first start.'
     MSG_DIR_BAD='No write permission or not enough free space, please choose again!'
     MSG_CONFIRM='Confirm installation? (1/0) > '
@@ -42,6 +44,8 @@ else
     MSG_TMP_FAIL='/tmp 可用空间不足，无法下载安装包。'
     MSG_DOWN='开始下载安装包...'
     MSG_DOWN_FAIL='安装包下载失败！'
+    MSG_VERIFY_FAIL='下载的安装包无效或已损坏。'
+    MSG_TLS_NOTE='在老旧路由环境下，TLS 校验可能会退化到兼容模式。'
     MSG_DIR_WARN='当前安装包只安装 ShellEasytier 脚本主体，运行时二进制会在首次启动时下载。'
     MSG_DIR_BAD='目录不可写或剩余空间不足，请重新选择！'
     MSG_CONFIRM='确认安装？(1/0) > '
@@ -76,8 +80,10 @@ ckcmd() {
 
 webget() {
     if ckcmd curl; then
+        curl -fsSL "$2" -o "$1" && return 0
         curl -kfsSL "$2" -o "$1"
     elif ckcmd wget; then
+        wget -qO "$1" "$2" && return 0
         wget --no-check-certificate -qO "$1" "$2"
     else
         return 1
@@ -86,10 +92,17 @@ webget() {
 
 remote_size_kb() {
     if ckcmd curl; then
-        curl -kfsSI "$1" | awk '/[Cc]ontent-[Ll]ength:/ {print int($2/1024); exit}' | tr -d '\r'
+        curl -fsSI "$1" 2>/dev/null | awk '/[Cc]ontent-[Ll]ength:/ {print int($2/1024); exit}' | tr -d '\r' && return 0
+        curl -kfsSI "$1" 2>/dev/null | awk '/[Cc]ontent-[Ll]ength:/ {print int($2/1024); exit}' | tr -d '\r'
     elif ckcmd wget; then
+        wget --server-response --spider "$1" 2>&1 | awk '/[Cc]ontent-[Ll]ength:/ {print int($2/1024); exit}' | tr -d '\r' && return 0
         wget --server-response --spider --no-check-certificate "$1" 2>&1 | awk '/[Cc]ontent-[Ll]ength:/ {print int($2/1024); exit}' | tr -d '\r'
     fi
+}
+
+verify_archive() {
+    [ -s "$1" ] || return 1
+    tar -tzf "$1" >/dev/null 2>&1
 }
 
 check_arch() {
@@ -408,8 +421,14 @@ install_main() {
     archive_path=/tmp/ShellEasytier.tar.gz
     echo '-----------------------------------------------'
     echo "$MSG_DOWN"
+    cecho "$MSG_TLS_NOTE"
     webget "$archive_path" "$archive_url" || {
         cecho "\033[31m$MSG_DOWN_FAIL\033[0m"
+        exit 1
+    }
+    verify_archive "$archive_path" || {
+        rm -f "$archive_path"
+        cecho "\033[31m$MSG_VERIFY_FAIL\033[0m"
         exit 1
     }
 

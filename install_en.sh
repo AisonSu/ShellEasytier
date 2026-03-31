@@ -5,9 +5,9 @@ export url
 export language=en
 
 if command -v curl >/dev/null 2>&1; then
-    sh -c "$(curl -kfsSl "$url/install.sh")"
+    sh -c "$(curl -fsSl "$url/install.sh" || curl -kfsSl "$url/install.sh")"
 elif command -v wget >/dev/null 2>&1; then
-    sh -c "$(wget --no-check-certificate -qO- "$url/install.sh")"
+    sh -c "$(wget -qO- "$url/install.sh" || wget --no-check-certificate -qO- "$url/install.sh")"
 else
     echo 'curl or wget is required.' >&2
     exit 1

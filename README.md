@@ -104,6 +104,13 @@ sh -c "$(curl -kfsSl "$url/install_en.sh")" && \
 If your runtime binaries are hosted on another server, override `url` when
 installing, or update `update_url` in the menu after installation.
 
+ShellEasyTier prefers normal HTTPS verification first. On legacy router
+environments where local `curl` / `wget` certificate support is incomplete, the
+download path may fall back to compatibility mode.
+
+This fallback is for device compatibility, not for stronger trust guarantees.
+Downloaded release archives and runtime binaries still need content validation.
+
 During installation, ShellEasyTier also asks where runtime binaries should be
 stored.
 
@@ -235,6 +242,10 @@ Instead:
    - `update_url/easytier-web-embed-<arch>` if enabled
 3. For backward compatibility, the runtime downloader can still fall back to
    legacy `pkg/<arch>/...` paths when available
+
+When the local download tool cannot complete strict TLS verification on older
+router environments, ShellEasyTier may retry in compatibility mode and then do
+basic post-download validation before accepting the asset.
 
 This keeps the installer lightweight while preserving multi-architecture support.
 
