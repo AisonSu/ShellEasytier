@@ -11,6 +11,7 @@ load_config() {
 
     [ -f "$APPDIR/configs/command.env" ] && . "$APPDIR/configs/command.env" >/dev/null 2>&1
     [ -f "$cfg_path" ] && . "$cfg_path" 2>/dev/null
+    [ -z "$release_version" ] && release_version=$(cat "$APPDIR/version" 2>/dev/null)
 
     [ -z "$et_mode" ] && et_mode=local
     [ -z "$instance_name" ] && instance_name=default
@@ -54,7 +55,7 @@ load_config() {
     ET_CORE_RUN_LOG="$TMPDIR/easytier-core.run.log"
     ET_WEB_RUN_LOG="$TMPDIR/easytier-web.run.log"
 
-    export ET_CFG_PATH ET_PIDFILE ET_WEB_PIDFILE ET_TOML_FILE ET_CORE_RUN_LOG ET_WEB_RUN_LOG
+    export ET_CFG_PATH ET_PIDFILE ET_WEB_PIDFILE ET_TOML_FILE ET_CORE_RUN_LOG ET_WEB_RUN_LOG release_version
 }
 
 load_config

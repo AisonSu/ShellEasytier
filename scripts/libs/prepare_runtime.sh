@@ -26,6 +26,13 @@ download_runtime_asset() {
     return 1
 }
 
+runtime_binary_valid() {
+    file="$1"
+    [ -s "$file" ] || return 1
+    chmod 755 "$file" 2>/dev/null || true
+    "$file" --help >/dev/null 2>&1
+}
+
 runtime_binaries_ready() {
     [ -s "$ET_BINDIR/easytier-core" ] || return 1
     [ -s "$ET_BINDIR/easytier-cli" ] || return 1
@@ -72,11 +79,10 @@ sync_runtime_binaries() {
             rm -rf "$tmp_dl"
             return 1
         }
-        [ -s "$tmp_dl/$file" ] || {
+        runtime_binary_valid "$tmp_dl/$file" || {
             rm -rf "$tmp_dl"
             return 1
         }
-        chmod 755 "$tmp_dl/$file"
     done
 
     for file in easytier-core easytier-cli; do
@@ -89,11 +95,10 @@ sync_runtime_binaries() {
             rm -rf "$tmp_dl"
             return 1
         }
-        [ -s "$tmp_dl/easytier-web-embed" ] || {
+        runtime_binary_valid "$tmp_dl/easytier-web-embed" || {
             rm -rf "$tmp_dl"
             return 1
         }
-        chmod 755 "$tmp_dl/easytier-web-embed"
         cp -f "$tmp_dl/easytier-web-embed" "$ET_BINDIR/easytier-web-embed"
         chmod 755 "$ET_BINDIR/easytier-web-embed"
     else
