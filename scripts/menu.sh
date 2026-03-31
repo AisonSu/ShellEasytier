@@ -32,11 +32,8 @@ core_service_running() {
 }
 
 core_tools_enabled() {
-    if [ "$et_mode" = remote ]; then
-        core_service_running
-    else
-        "$APPDIR/start.sh" cli-status-code >/dev/null 2>&1
-    fi
+    [ "$et_mode" = remote ] && return 1
+    "$APPDIR/start.sh" cli-status-code >/dev/null 2>&1
 }
 
 snapshot_core_runtime_config() {
