@@ -13,5 +13,7 @@ start_service() {
 }
 
 stop_service() {
-    "$APPDIR/start.sh" web-stop >/dev/null 2>&1
+    kill -TERM "$(cat /tmp/ShellEasytier/easytier-web.pid 2>/dev/null)" 2>/dev/null
+    rm -f /tmp/ShellEasytier/easytier-web.pid
+    killall easytier-web-embed 2>/dev/null
 }
