@@ -27,8 +27,16 @@ web_menu_enabled() {
     can_offer_local_web_menu
 }
 
+core_service_running() {
+    "$APPDIR/start.sh" status-code >/dev/null 2>&1
+}
+
 core_tools_enabled() {
-    "$APPDIR/start.sh" cli-status-code >/dev/null 2>&1
+    if [ "$et_mode" = remote ]; then
+        core_service_running
+    else
+        "$APPDIR/start.sh" cli-status-code >/dev/null 2>&1
+    fi
 }
 
 snapshot_core_runtime_config() {
@@ -93,7 +101,7 @@ menu_header() {
     versionsh=$(cat "$APPDIR/version" 2>/dev/null)
     running_status
     core_running=0
-    core_tools_enabled && core_running=1
+    core_service_running && core_running=1
 
     if check_autostart; then
         auto_status="\033[32m$MENU_AUTOSTART_ON\033[0m"
