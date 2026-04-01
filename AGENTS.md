@@ -79,6 +79,10 @@ When debugging a live router install, the minimum runtime files to inspect are:
   uninstall entry scripts plus `.sha256` files.
 - `local` mode and `remote` mode must remain different products in one UI, not
   one blended mode.
+- In `remote` mode, do not assume local RPC is available just because
+  `easytier-core` is running.
+- In `remote` mode, do not assume local RPC is available just because
+  `easytier-core` is running.
 - The router compatibility layer is enabled by default and should remain low-
   input for end users.
 - Xiaomi / snapshot-like targets currently use a conservative boot recovery
@@ -110,6 +114,8 @@ current truth unless the user explicitly changes them:
 
 - Main menu is state-driven, not static.
 - Tools/status should only appear when core is running.
+- In `remote` mode, tools that require local RPC may stay hidden even if core is
+  running.
 - Service/Web menus should expose state-appropriate actions.
 - Effective values, not raw config file text, should be shown whenever possible.
 - Advanced features should stay grouped by capability.
@@ -191,6 +197,10 @@ For router networking issues specifically, prefer checking:
 - `local` mode menus may expose local networking, routing, and advanced runtime
   options.
 - Do not casually mix `local`-only CLI diagnostics into `remote` mode.
+- Treat `remote` mode local RPC as optional unless target-device validation
+  proves it is reliably available.
+- Treat `remote` mode local RPC as optional unless target-device validation
+  proves it is reliably available.
 
 ### 2. `get_config.sh` must not recurse into `init.sh`
 
@@ -230,6 +240,10 @@ For router networking issues specifically, prefer checking:
   runtime state.
 - Current values shown in menus should reflect **effective values**, including
   defaults, not only raw file contents.
+- Distinguish **service running** from **local management interface ready** when
+  they do not always coincide.
+- Distinguish **service running** from **local management interface ready** when
+  they do not always coincide.
 
 ### 7. Compatibility mode should stay simple by default
 
@@ -296,6 +310,7 @@ Use this as a quick dependency checklist:
   - check recursion/init boundaries
 - If you change `scripts/libs/health_check.sh`:
   - check `status-code` and `web-status-code`
+  - check `cli-status-code` semantics separately from core liveness
   - check menu/status visibility that depends on readiness
   - check snapshot recovery and compatibility hooks that gate on readiness
 - If you change `scripts/menus/1_start.sh`:
@@ -399,6 +414,8 @@ When extending compatibility:
   - `install_web=ON`
   - runtime placement policy allowing web payload
 - Keep core and web autostart logically independent.
+- Upgrade install should preserve the existing `install_web` choice.
+- Users should be able to enable local Web later from the menu when supported.
 
 ## Installer Rules
 
@@ -408,6 +425,7 @@ When extending compatibility:
 - Installer profile injection must be idempotent and must not leave malformed
   aliases behind.
 - Always preserve the ability to override `url` at install time.
+- Upgrade install should preserve existing config and existing Web choice by default.
 
 ## Release Rules
 

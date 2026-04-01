@@ -11,7 +11,7 @@ Use it to answer:
 
 ## Release Snapshot
 
-- Last updated for context handoff: 2026-03-31
+- Last updated for context handoff: 2026-04-01
 - Latest released tag target: `v0.2.1`
 - `v0.2.1` currently points to: `7397bdd`
 - `v0.2.1` includes the snapshot boot recovery, alias persistence, and
@@ -96,7 +96,7 @@ capabilities implemented:
 - shell-safe command persistence in `command.env`
 - manual interactive start separated from daemon-run path
 - runtime logs written to `/tmp/ShellEasytier/`
-- shared readiness checks now require `pid + rpc_portal + easytier-cli node`
+- local mode readiness now uses core liveness plus local RPC probing
 - web readiness now checks both process and local web API port listening
 - start failure fuse writes `.start_error` and disables future autostart
 - procd stop path no longer recurses through `start.sh stop`
@@ -104,6 +104,8 @@ capabilities implemented:
 - menu CLI queries no longer shell-wrap `easytier-cli` through `sh -c`
 - remote mode no longer forces local tools visibility when RPC management is unavailable
 - remote mode now treats core liveness and local RPC readiness as separate states
+- remote-mode restart no longer stops an already-running core before config-server is set
+- local CLI target now normalizes bind addresses like `0.0.0.0:15888` to loopback for checks
 - upgrade install preserves existing Web console choice
 - local Web console can now be enabled later from the Web menu
 
@@ -168,6 +170,8 @@ capabilities implemented:
 - local mode can start with current command generation
 - local `node/peer/route` menu flow was repaired via RPC portal adjustments
 - web-start / web-stop works when `install_web=ON`
+- overwrite upgrade preserves `configs/`
+- overwrite upgrade preserves existing `install_web` choice
 - syntax checks pass for updated boot-recovery and startup scripts
 
 ### Router-validated
@@ -208,6 +212,10 @@ capabilities implemented:
   topologies may still require interface overrides
 - snapshot boot recovery is now stable enough for AX6000 testing, but the dual
   entry model should remain until more cold-boot validation is accumulated
+- `remote` mode should be treated as “core service available” even when local RPC is absent
+- local RPC availability in `remote` mode appears to be an upstream/runtime
+  behavior issue, not a Shell wrapper parameter-passing bug
+- router-side manual checks should prefer `netstat` or `/proc/net/tcp*` over `ss`
 
 ## Current Open Questions
 
@@ -225,12 +233,14 @@ capabilities implemented:
 
 ## Recommended Next Work
 
-1. Validate GitHub Release assets end-to-end for `v0.2.1` against the current
+1. Confirm whether remote-mode local RPC is intentionally unavailable on target
+   router environments, and decide whether docs should call this out more strongly
+2. Validate GitHub Release assets end-to-end for `v0.2.1` against the current
    `latest/download` model
-2. Continue cold-boot validation on Xiaomi / snapshot targets to decide whether
+3. Continue cold-boot validation on Xiaomi / snapshot targets to decide whether
    the dual boot hook model can be simplified
-3. Continue improving compatibility UX for novice users
-4. Add validation for advanced numeric / enum inputs
+4. Continue improving compatibility UX for novice users
+5. Add validation for advanced numeric / enum inputs
 
 ## Recovery Advice For New Sessions
 
